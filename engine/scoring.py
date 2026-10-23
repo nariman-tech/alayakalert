@@ -53,6 +53,12 @@ COMBOS = [
 FLOOR_MED = 45
 COMBOS_MED = [
     (0, "Схема «заплати — получишь больше»", lambda h: "X_PAY_TO_GET" in h),
+    (3, "Нереалистичная доходность", lambda h: "T3_RETURN" in h),
+    (1, "Платное участие в розыгрыше", lambda h: "T1_PAID" in h),
+    (1, "Условия розыгрыша только в личке", lambda h: "T1_HIDDEN_TERMS" in h),
+    (3, "Обещание дохода + давление или срочность", lambda h: "T3_EASY_INCOME" in h and "T3_URGENCY" in h),
+    (0, "Перевод на личную карту + гарантия или обещание дохода",
+     lambda h: "X_CARD" in h and bool({"T3_GUARANTEE", "T3_EASY_INCOME", "X_PAY_TO_GET"} & h)),
     (1, "Денежная приманка + давление, личка или оплата",
      lambda h: "T1_BAIT" in h and bool({"T3_URGENCY", "T2_CHANNEL", "X_CARD", "T1_PAID", "T1_WIN_DM", "T2_LINK"} & h)),
     (1, "Личное сообщение о «выигрыше»", lambda h: "T1_WIN_DM" in h),

@@ -54,6 +54,7 @@ _def("T1_REGULAR", 1, "low", "Регулярность", "Розыгрыши и�
 _def("T1_WIN_DM", 1, "medium", "Личное сообщение о «выигрыше»", "Человеку пишут лично: «вы выиграли», «вам начислен приз», «сізге сыйлық бұйырды».")
 _def("T1_BAIT", 1, "medium", "Денежная приманка", "«Забери приз», «бонус ждёт», «денежный подарок первым участникам», крупная сумма без условий.")
 _def("T1_BIG_SUM", 1, "low", "Крупная сумма в приманке", "В приманке названа сумма от миллиона тенге.")
+_def("T1_HIDDEN_TERMS", 1, "medium", "Условия розыгрыша только в личке", "Условия участия не опубликованы, их обещают объяснить в личных сообщениях или у админа.")
 
 # ── Трек 2: скрытая реклама казино ───────────────────────────────────────────
 _def("T2_PROMO", 2, "high", "Промокод или бонус на депозит", "Промокод/бонус в игровом контексте: «+200% к депозиту», фриспины.")
@@ -100,7 +101,7 @@ def rx(*parts: str) -> re.Pattern:
 
 
 # ── Словари (регулярные выражения по нормализованному тексту) ────────────────
-GIVEAWAY_CTX = rx(r"розыгр", r"разыгр", r"приз", r"ұтыс", r"сыйлық", r"жүлде", r"конкурс", r"гив", r"giveaway",
+GIVEAWAY_CTX = rx(r"розыгр", r"разыгр", r"приз", r"выигр",r"ұтыс", r"сыйлық", r"жүлде", r"конкурс", r"гив", r"giveaway",
                   r"победител", r"жеңімпаз", r"лотере", r"эфир", r"\bставк")
 PAY_WORDS = rx(r"оплат", r"\bкупи", r"купить", r"покупк", r"приобре", r"взнос", r"переве", r"перевод", r"\bскин",
                r"каспи", r"kaspi", r"билет", r"номерок", r"номерк", r"\bслот", r"\bчек\b", r"төле", r"аудар", r"сатып ал",
@@ -168,7 +169,7 @@ DEPOSIT_BONUS = rx(r"бонус\w*\s*(\+?\d+\s*%)?\s*(на|к)\s*(перв\w*\s*
                    r"\+\s?\d{2,3}\s*%\s*(к|на)\s*(депозит|пополнен)", r"фриспин\w*", r"free ?spins?", r"фри ?спин")
 LINK = rx(r"bit\.ly", r"clck\.ru", r"t\.ly", r"tinyurl", r"cutt\.ly", r"goo\.su", r"is\.gd", r"rb\.gy", r"shorturl",
           r"\?ref=", r"\?r=", r"/ref/", r"refid", r"utm_\w+=", r"aff_id", r"partner_id", r"clickid", r"/go/", r"\?p=")
-NATIVE_WIN = rx(r"поднял", r"\bзанос", r"залет\w*", r"отмазал", r"выбил\w*\s*(\d|х|x)",
+NATIVE_WIN = rx(r"поднял", r"\bзанос", r"зал[её]т\w*\s+(на\s+)?([xх]\s?\d|\d)", r"отмазал", r"выбил\w*\s*(\d|х|x)",
                 r"(я|мы)\s+(\w+\s+)?(выиграл|поднял|вывел)", r"вывел\w*\s+\d", r"вывод\w*\s+(пришел|за \d|моментальн|за минут)",
                 r"(?<![\w])(x|х)\s?\d{2,4}\b", r"иксы", r"ұтып алдым", r"шығарып алдым", r"выигрыш\w*\s+\d", r"сорвал\w* куш")
 GAMBLING = rx(r"(?<!не )казино", r"casino", r"\bслот", r"рулетк", r"игров\w* автомат", r"\bcrash\b", r"\bкраш\b", r"авиатор",
@@ -266,9 +267,10 @@ def detect_text(units: list[Unit]) -> dict[str, Hit]:
     casino = bool(CASINO_CTX.search(doc))
 
     # Трек 1
-    paid_ev = [{"msg": u.msg, "text": _trim(u.orig)} for u in units
-               if (PAID_COND.search(u.norm) and PAY_WORDS.search(u.norm)) or PAID_PRICE.search(u.norm)]
+    paid_ev = []
     if giveaway:
+        paid_ev = [{"msg": u.msg, "text": _trim(u.orig)} for u in units
+                   if (PAID_COND.search(u.norm) and PAY_WORDS.search(u.norm)) or PAID_PRICE.search(u.norm)]
         paid_ev += _find(units, PAID_COURSE)
     add("T1_PAID", paid_ev[:3])
     if PRIZE_FEE.search(doc) and (PRIZE_WIN.search(doc) or PRIZE_WORDS.search(doc)):
@@ -337,8 +339,15 @@ def detect_text(units: list[Unit]) -> dict[str, Hit]:
     add("X_PAY_TO_GET", _find(units, PAY_TO_GET, 2))
     add("X_WITHDRAW_FEE", _find(units, WITHDRAW_FEE, 2))
 
+    # Смысловой слой: сочетания понятий в одном сообщении (см. concepts.py)
+    from .concepts import detect as detect_concepts
+    detect_concepts(units, add)
+    # «Выиграл + промокод» — реклама игры даже без слова «казино»
+    if PROMO.search(doc) and "T2_NATIVE_WIN" in hits:
+        add("T2_PROMO", _find(units, PROMO, 1))
+
     # Зависимые от других признаков
-    money_flow = any(k in hits for k in ("T1_PAID", "T1_POT", "X_CARD", "X_PAY_TO_GET", "T1_PRIZE_FEE"))
+    money_flow =any(k in hits for k in ("T1_PAID", "T1_POT", "X_CARD", "X_PAY_TO_GET", "T1_PRIZE_FEE"))
     if CHARITY.search(doc) and money_flow:
         add("T1_CHARITY", _find(units, CHARITY, 2))
     if FREE.search(doc) and ("T1_PAID" in hits or "T1_POT" in hits):

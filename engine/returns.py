@@ -44,7 +44,8 @@ INVEST_GET_KZ = re.compile(
 MULT = re.compile(r"(?<![\w.])(?:x|х|×)\s?(\d+(?:[.,]\d+)?)(?![\w.])|(удво\w*|в два раза|екі есе)|(утро\w*|в три раза|үш есе)")
 PERIOD_NEAR = re.compile(r"(?:через|за|в течение|спустя|кейін|ішінде)?\s*(\d+)?\s*" + PERIOD_WORD)
 
-EXCLUDE_CTX = re.compile(r"(скидк|кэшб|кешб|cashback|налог|инфляц|кредит|комисси|рассрочк|уценк|процент\w* по займ)")
+EXCLUDE_CTX = re.compile(r"(скидк|кэшб|кешб|cashback|налог|инфляц|кредит|комисси|рассрочк|уценк|процент\w* по займ"
+                         r"|вырос|выросл|упал|подорож|подешев|снизил|курс\w*|индекс|рост цен|подешевел)")
 
 
 @dataclass
@@ -136,7 +137,7 @@ def find_returns(text: str) -> list[ReturnFinding]:
         out.append(ReturnFinding(m.group(0), pct / 100, days, annualize(pct / 100, days)))
     for m in PERIOD_PCT.finditer(text):
         ctx = text[max(0, m.start() - 40): m.start()]
-        if EXCLUDE_CTX.search(ctx):
+        if EXCLUDE_CTX.search(ctx) or re.search(r"годов", text[m.end(): m.end() + 10]):
             continue
         word = m.group(1)
         days = 1.0 if re.search(r"(дн|ден|сут|күн)", word) else 7.0 if re.search(r"(недел|апта)", word) \

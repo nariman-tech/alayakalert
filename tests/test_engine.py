@@ -84,6 +84,26 @@ class ShortMessages(unittest.TestCase):
             self.assertEqual(analyze_text(t)["level"], "low", t)
 
 
+class Generalization(unittest.TestCase):
+    """Смысловой слой: перефразировки ловятся, похожие честные тексты — нет."""
+
+    def test_paraphrases(self):
+        for t in ["Перевод на личную карту, через месяц верну вдвое больше",
+                  "Вывод завис? Пополни ещё раз, тогда откроется вся сумма",
+                  "Закинь 5к, бонус умножится в три раза",
+                  "Билет участия в розыгрыше — 2к, пишите админу"]:
+            self.assertNotEqual(analyze_text(t)["level"], "low", t)
+
+    def test_honest_lookalikes(self):
+        for t in ["Оплатите заказ сегодня и получите скидку 10% на следующую покупку",
+                  "Скинь 5000 до пятницы, в понедельник верну",
+                  "Депозит в банке: проценты начисляются ежемесячно, ставка 14% годовых",
+                  "Биткоин вырос на 5% за неделю, аналитики ждут коррекции",
+                  "Обсуждаем матч и коэффициенты, никаких гарантий выигрыша нет",
+                  "Стрим по CS2: залетайте вечером, болтаем и играем"]:
+            self.assertEqual(analyze_text(t)["level"], "low", t)
+
+
 class Streams(unittest.TestCase):
     def test_shill_and_repeat_winner(self):
         bids, winners = [], []

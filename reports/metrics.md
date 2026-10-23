@@ -24,9 +24,9 @@
 | Метод | Recall без маскировки | Recall с маскировкой | Ложные срабатывания с маскировкой |
 | --- | --- | --- | --- |
 | Словарь | 39% | 6% | 4% |
-| SafeNet KZ | 92% | 83% | 2% |
+| SafeNet KZ | 92% | 85% | 2% |
 
-По техникам (только подозрительные кейсы): emoji: словарь 1/7, SafeNet 7/7; homoglyph: словарь 0/7, SafeNet 6/7; leet: словарь 0/11, SafeNet 9/11; mixed: словарь 0/2, SafeNet 2/2; spaced: словарь 0/8, SafeNet 7/8; stretch: словарь 2/9, SafeNet 9/9; translit: словарь 0/8, SafeNet 3/8
+По техникам (только подозрительные кейсы): emoji: словарь 1/7, SafeNet 7/7; homoglyph: словарь 0/7, SafeNet 6/7; leet: словарь 0/11, SafeNet 9/11; mixed: словарь 0/2, SafeNet 2/2; spaced: словарь 0/8, SafeNet 7/8; stretch: словарь 2/9, SafeNet 9/9; translit: словарь 0/8, SafeNet 4/8
 
 ## Скорость обнаружения (чаты и эфиры)
 
