@@ -148,7 +148,7 @@ def analyze_corpus(cases: list[dict], model: TextModel | None = None, with_netwo
             by_acc[c["account"]].append(c)
     paid_ids = {"T1_PAID", "T1_POT", "X_PAY_TO_GET", "T1_PRIZE_FEE"}
     for acc, items in by_acc.items():
-        free = [c for c in items if "D_FREE" in {s["id"] for s in first[c["id"]]["signals"]}]
+        free = [c for c in items if {"D_FREE", "T1_WARMUP"} & {s["id"] for s in first[c["id"]]["signals"]}]
         for c in items:
             sigs = {s["id"] for s in first[c["id"]]["signals"]}
             if not (sigs & paid_ids):

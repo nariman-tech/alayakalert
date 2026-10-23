@@ -59,5 +59,22 @@ class AccountHistory(unittest.TestCase):
         self.assertEqual(by["f1"]["level"], "low")
 
 
+
+class Warmup(unittest.TestCase):
+    def test_observed_warmup(self):
+        from pathlib import Path
+        raw = (Path(__file__).resolve().parents[1] / "data" / "team" / "observed_warmup_anonymized.txt").read_text(encoding="utf-8")
+        r = analyze_input(raw)
+        ids = {s["id"] for s in r["signals"]}
+        self.assertIn("T1_WARMUP", ids)
+        self.assertNotIn("X_CARD", ids)  # автор переводит сам — это не просьба о деньгах
+        self.assertEqual(r["level"], "medium")
+
+    def test_outgoing_is_not_request(self):
+        from engine.pipeline import analyze_text
+        self.assertNotIn("X_CARD", {s["id"] for s in analyze_text("Перевожу на номер +7 700 000 11 04, держи на учёбу")["signals"]})
+        self.assertIn("X_CARD", {s["id"] for s in analyze_text("Переводите на номер +7 700 000 11 04 за участие")["signals"]})
+
+
 if __name__ == "__main__":
     unittest.main()
