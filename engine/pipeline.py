@@ -43,7 +43,7 @@ def build_units(case: dict, upto: int | None = None) -> list[Unit]:
 
 def _collect(case: dict, upto: int | None, extra: dict[str, Hit] | None, model: TextModel | None) -> dict[str, Hit]:
     units = build_units(case, upto)
-    hits = detect_text(units)
+    hits = detect_text(units, local=case.get("type") == "chat")
     if case.get("bids") or case.get("winners"):
         until_t = None
         if upto is not None and case.get("messages"):
@@ -103,6 +103,65 @@ def analyze_input(text: str, model: TextModel | None = None, case_id: str = "upl
             res = analyze_case(case, model=model)
             return {**res, "case": case, "timeline": timeline(case, model=model)}
     return analyze_text(text, model=model)
+
+
+def _sub_case(case: dict, start: int, end: int) -> dict:
+    sub = dict(case)
+    sub["messages"] = case["messages"][start:end]
+    sub["images"] = [{**i, "msg": i["msg"] - start} for i in case.get("images", []) if start <= i.get("msg", 0) < end]
+    return sub
+
+
+def author_breakdown(case: dict) -> list[dict]:
+    """Кто пишет подозрительное: признаки по сообщениям каждого автора."""
+    by_author: dict[str, list] = defaultdict(list)
+    for i, m in enumerate(case.get("messages", [])):
+        by_author[m.get("author", "")].append(i)
+    out = []
+    for author, idx in by_author.items():
+        units = [u for u in build_units(case) if u.msg in set(idx)]
+        hits = detect_text(units, local=True)
+        pos = [CATALOG[s] for s in hits if CATALOG[s].points > 0]
+        out.append({"author": author, "messages": len(idx), "points": sum(d.points for d in pos),
+                    "signals": [d.title for d in sorted(pos, key=lambda d: -d.points)][:4]})
+    out.sort(key=lambda a: (-a["points"], -a["messages"]))
+    return out
+
+
+def analyze_chat(case: dict, model: TextModel | None = None, window: int = 40, step: int = 20) -> dict:
+    """Переписка любой длины.
+
+    Короткий чат анализируется целиком. В длинном признаки не суммируются по всей истории
+    (в большом честном чате кто-нибудь когда-нибудь напишет «вложи»): чат режется на окна
+    по 40 сообщений, и показывается самое опасное окно. Отдельно — признаки по авторам
+    и сообщение, на котором риск впервые стал высоким.
+    """
+    msgs = case.get("messages", [])
+    n = len(msgs)
+    start, end = 0, n
+    if n > window:
+        best = None
+        for s in range(0, max(1, n - window + step), step):
+            r = analyze_case(_sub_case(case, s, s + window), model=model)
+            if best is None or r["risk"] > best[0]["risk"]:
+                best = (r, s)
+        start, end = best[1], min(n, best[1] + window)
+    sub = _sub_case(case, start, end)
+    res = analyze_case(sub, model=model)
+    for s in res["signals"]:
+        for e in s["evidence"]:
+            if e.get("msg", -1) >= 0:
+                e["msg"] += start
+    tl = timeline(sub, model=model)
+    for p in tl:
+        p["msg"] += start
+    fh = first_high(tl)
+    res["chat"] = {"messages": n, "window": [start, end - 1], "first_high": fh,
+                   "authors": author_breakdown(case)[:8], "source": case.get("source", "")}
+    sub["messages"] = [dict(m) for m in sub["messages"]]
+    live = dict(sub)
+    live_tl = [{**p, "msg": p["msg"] - start} for p in tl]
+    return {**res, "case": live, "timeline": live_tl}
 
 
 def timeline(case: dict, model: TextModel | None = None) -> list[dict]:

@@ -182,7 +182,11 @@ CHANNEL = rx(r"(закрыт|приват|vip|вип|секретн|скрыт|�
              r"в бот[ае]?\b", r"@\w+bot\b", r"\w+_?бот\b",
              r"ссылк\w*\s+(в|у меня в)\s+(шапке|био|профиле|описании|канале|тг|телеге|закреп)",
              r"пиши\w*\s+(в\s+)?(лс|личк|директ|\+)", r"жабық канал", r"переходи\w*\s+(в|по)\s+(канал|ссылк|бот)",
-             r"(подробност|детал|услови|инф[оа])\w*\s+(в|у)\s+(личк|лс|директ|бот|закрыт)", r"(в|у)\s+личк\w*", r"жеке\w*\s+(хат|чат)")
+             r"(подробност|детал|услови|инф[оа])\w*\s+(в|у)\s+(личк|лс|директ|бот|закрыт)")
+# «пиши в личку» само по себе обычно для чатов — подозрительно только рядом с деньгами, призами или казино
+CHANNEL_DM = rx(r"(в|у)\s+личк\w*", r"пиши\w*\s+(в\s+)?(лс|директ)", r"жеке\w*\s+(хат|чат)")
+MONEY_CTX = rx(r"розыгр", r"приз", r"бонус", r"выигр", r"казино", r"слот", r"\bставк", r"деньг", r"\d+\s*(тг|тенге|₸|к\b)",
+               r"доход", r"процент", r"каспи", r"сыйлық", r"ақша")
 MIRROR = rx(r"зеркал", r"рабоч\w* (ссылк|адрес|домен)", r"актуальн\w* (ссылк|адрес|домен|вход)", r"\bайна\b",
             r"обход\w* блокиров", r"без (впн|vpn)", r"(впн|vpn) не нужен")
 
@@ -259,8 +263,12 @@ def _trim(s: str, n: int = 180) -> str:
 DOMAIN_RE = re.compile(r"\b((?:[a-z0-9\-]+\.)+(?:com|net|org|io|kz|ru|xyz|top|bet|vip|club|site|online|win|cc|me|ly|link|app|pro|fun|live|game|casino))\b")
 
 
-def detect_text(units: list[Unit]) -> dict[str, Hit]:
-    """Текстовые признаки по списку предложений одного кейса."""
+def detect_text(units: list[Unit], local: bool = False) -> dict[str, Hit]:
+    """Текстовые признаки по списку предложений одного кейса.
+
+    local=True — для переписки: контекст («это розыгрыш», «это казино») проверяется внутри
+    одного сообщения, а не по всему чату, чтобы не связывать разные темы разных людей.
+    """
     doc = "\n".join(u.norm for u in units)
     hits: dict[str, Hit] = {}
 
@@ -275,13 +283,16 @@ def detect_text(units: list[Unit]) -> dict[str, Hit]:
 
     giveaway = bool(GIVEAWAY_CTX.search(doc))
     casino = bool(CASINO_CTX.search(doc))
+    msg_text: dict[int, str] = {}
+    for u in units:
+        msg_text[u.msg] = msg_text.get(u.msg, "") + "\n" + u.norm
+    g_units = [u for u in units if GIVEAWAY_CTX.search(msg_text[u.msg])] if local else (units if giveaway else [])
+    c_msgs = {m for m, t in msg_text.items() if CASINO_CTX.search(t)} if local else (set(msg_text) if casino else set())
 
     # Трек 1
-    paid_ev = []
-    if giveaway:
-        paid_ev = [{"msg": u.msg, "text": _trim(u.orig)} for u in units
-                   if (PAID_COND.search(u.norm) and PAY_WORDS.search(u.norm)) or PAID_PRICE.search(u.norm)]
-        paid_ev += _find(units, PAID_COURSE)
+    paid_ev = [{"msg": u.msg, "text": _trim(u.orig)} for u in g_units
+               if (PAID_COND.search(u.norm) and PAY_WORDS.search(u.norm)) or PAID_PRICE.search(u.norm)]
+    paid_ev += _find(g_units, PAID_COURSE)
     add("T1_PAID", paid_ev[:3])
     if PRIZE_FEE.search(doc) and (PRIZE_WIN.search(doc) or PRIZE_WORDS.search(doc)):
         add("T1_PRIZE_FEE", _find(units, PRIZE_WIN, 1) + _find(units, PRIZE_FEE, 2))
@@ -293,22 +304,24 @@ def detect_text(units: list[Unit]) -> dict[str, Hit]:
     if bait_ev and BIG_SUM.search(doc):
         add("T1_BIG_SUM", _find(units, BIG_SUM, 1))
     add("T1_RANDOM", _find(units, RANDOM))
-    if giveaway:
-        add("T1_ORG_INCOME", _find(units, ORG_INCOME))
+    add("T1_ORG_INCOME", _find(g_units, ORG_INCOME))
     add("T1_POT", _find(units, POT))
-    if REGULAR.search(doc) and giveaway:
-        add("T1_REGULAR", _find(units, REGULAR, 2))
+    add("T1_REGULAR", _find(g_units, REGULAR, 2))
 
     # Трек 2
-    if PROMO.search(doc) and casino:
-        add("T2_PROMO", _find(units, PROMO))
+    add("T2_PROMO", _find([u for u in units if u.msg in c_msgs], PROMO))
     add("T2_PROMO", _find(units, DEPOSIT_BONUS))
     add("T2_LINK", _find(units, LINK))
     add("T2_NATIVE_WIN", _find(units, NATIVE_WIN))
     add("T2_GAMBLING", _find(units, GAMBLING))
-    if BOOKMAKER.search(doc) and GAMBLING.search(doc):
-        add("T2_BRAND_COVER", _find(units, BOOKMAKER, 1) + _find(units, GAMBLING, 1))
+    bc_msgs = [m for m, t in msg_text.items() if BOOKMAKER.search(t) and GAMBLING.search(t)] if local else \
+        (list(msg_text) if BOOKMAKER.search(doc) and GAMBLING.search(doc) else [])
+    if bc_msgs:
+        bc_units = [u for u in units if u.msg in bc_msgs]
+        add("T2_BRAND_COVER", _find(bc_units, BOOKMAKER, 1) + _find(bc_units, GAMBLING, 1))
     add("T2_CHANNEL", _find(units, CHANNEL))
+    add("T2_CHANNEL", [{"msg": u.msg, "text": _trim(u.orig)} for u in units
+                       if CHANNEL_DM.search(u.norm) and MONEY_CTX.search(msg_text[u.msg])][:2])
     add("T2_MIRROR", _find(units, MIRROR))
     # похожие домены: одинаковая буквенная основа, разные цифры
     domains = sorted({m.group(1) for u in units for m in DOMAIN_RE.finditer(u.norm)})
@@ -322,7 +335,13 @@ def detect_text(units: list[Unit]) -> dict[str, Hit]:
 
     # Трек 3
     best = None
+    # по предложениям и по сообщению целиком (условия часто разбиты на строки: «1) салады… 2) аласыз»)
+    msg_units = {}
     for u in units:
+        mu = msg_units.setdefault(u.msg, Unit(u.msg, "", ""))
+        mu.orig = (mu.orig + " " + u.orig).strip()
+        mu.norm = (mu.norm + " " + u.norm.replace("\n", " ")).strip()
+    for u in list(units) + [m for m in msg_units.values() if m.norm]:
         for f in find_returns(u.norm):
             if f.level == "none":
                 continue
@@ -339,7 +358,7 @@ def detect_text(units: list[Unit]) -> dict[str, Hit]:
     add("T3_LEGEND", _find(units, LEGEND, 2))
     add("T3_REINVEST", _find(units, REINVEST))
     add("T3_PAYOUT_PROOF", _find(units, PAYOUT, 2))
-    add("T3_DENIAL", _find(units, DENIAL, 1))
+    add("T3_DENIAL", [e for e in _find(units, DENIAL, 3) if not e["text"].rstrip().endswith("?")][:1])  # вопрос — не отрицание
     add("T3_EASY_INCOME", _find(units, EASY_INCOME, 2))
     add("T3_INVEST_CALL", _find(units, INVEST_CALL, 1))
     add("T3_NEW_MONEY", _find(units, NEW_MONEY, 2))
@@ -355,7 +374,7 @@ def detect_text(units: list[Unit]) -> dict[str, Hit]:
 
     # Смысловой слой: сочетания понятий в одном сообщении (см. concepts.py)
     from .concepts import detect as detect_concepts
-    detect_concepts(units, add)
+    detect_concepts(units, add, local=local)
     # «Выиграл + промокод» — реклама игры даже без слова «казино»
     if PROMO.search(doc) and "T2_NATIVE_WIN" in hits:
         add("T2_PROMO", _find(units, PROMO, 1))
@@ -372,6 +391,23 @@ def detect_text(units: list[Unit]) -> dict[str, Hit]:
     add("D_OFFICIAL", _find(units, OFFICIAL, 1))
     add("D_LICENSED_FIN", _find(units, LICENSED, 1))
     add("D_EDU", _find(units, EDU, 1))
+
+    # В переписке снижающий фактор действует только на сообщения, где найдены признаки:
+    # «обсуждаем финансы» в начале чата не должно гасить схему, начавшуюся через 40 сообщений.
+    if len({u.msg for u in units}) > 1:
+        pos_msgs = {e["msg"] for sid, h in hits.items() if CATALOG[sid].points > 0 for e in h.evidence if e.get("msg", -1) >= 0}
+        for sid in [s for s in hits if CATALOG[s].points < 0]:
+            ev = [e for e in hits[sid].evidence if e.get("msg") in pos_msgs]
+            if not ev:
+                for u in units:
+                    if u.msg in pos_msgs and {"D_WARNING": WARNING, "D_OFFICIAL": OFFICIAL, "D_LICENSED_FIN": LICENSED,
+                                              "D_EDU": EDU, "D_FREE": FREE}[sid].search(u.norm):
+                        ev = [{"msg": u.msg, "text": _trim(u.orig)}]
+                        break
+            if ev:
+                hits[sid].evidence = ev[:2]
+            else:
+                del hits[sid]
     if FREE.search(doc) and not money_flow:
         add("D_FREE", _find(units, FREE, 1))
     return hits

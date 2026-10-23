@@ -8,7 +8,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from engine.pipeline import analyze_input  # noqa: E402
+from engine.importers import load_export  # noqa: E402
+from engine.pipeline import analyze_chat, analyze_input  # noqa: E402
 from engine.signals import CATALOG  # noqa: E402
 
 RESULTS = ROOT / "reports" / "results.json"
@@ -49,6 +50,12 @@ SAMPLES = [
 [3:50] @fund_shans: Лот 2 продан @asel38. Рахмет!"""),
 ]
 
+FILE_SAMPLES = [
+    ("Выгрузка Telegram: клуб «Береке»", "telegram_export_sample.json"),
+    ("Выгрузка WhatsApp: касса айналымы", "whatsapp_sample.txt"),
+    ("Выгрузка WhatsApp: честный родительский чат", "whatsapp_honest_sample.txt"),
+]
+
 CASE_KEYS = ("id", "type", "platform", "account", "title", "split", "label", "scheme_name", "track", "messages", "images",
              "rules", "date")
 
@@ -63,6 +70,17 @@ def build_payload(mode: str = "static", model=None) -> dict:
     catalog = {k: {"title": v.title, "points": v.points, "weight": v.weight} for k, v in CATALOG.items()}
     samples = [{"label": label, "text": text,
                 "result": analyze_input(text, model=model, case_id=f"sample-{i}")} for i, (label, text) in enumerate(SAMPLES)]
+    for label, fname in FILE_SAMPLES:
+        path = ROOT / "data" / "samples" / fname
+        if not path.exists():
+            continue
+        cases_f = load_export(fname, path.read_bytes())
+        if cases_f:
+            cases_f[0]["id"] = "file-" + fname.split(".")[0]
+            res = analyze_chat(cases_f[0], model=model)
+            samples.append({"label": label, "file": True,
+                            "text": f"Файл выгрузки: {fname} — {res['chat']['messages']} сообщений. "
+                                    "Свой файл можно загрузить при запуске сервера.", "result": res})
     team_file = ROOT / "reports" / "team_history.json"
     team = json.loads(team_file.read_text(encoding="utf-8")) if team_file.exists() else {"rows": []}
     return {"mode": mode, "cases": cases, "results": data["results"], "graph": data["graph"],

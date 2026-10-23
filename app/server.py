@@ -26,7 +26,8 @@ except ImportError:  # pragma: no cover
 
 from app.payload import build_payload, render_page  # noqa: E402
 from engine.ml import TextModel  # noqa: E402
-from engine.pipeline import analyze_input  # noqa: E402
+from engine.importers import load_export  # noqa: E402
+from engine.pipeline import analyze_chat, analyze_input  # noqa: E402
 
 DATA = ROOT / "data" / "cases.jsonl"
 FEEDBACK = ROOT / "reports" / "feedback.jsonl"
@@ -37,6 +38,7 @@ PAYLOAD = build_payload("server", model=MODEL)
 PAGE = render_page(PAYLOAD, full_document=True)
 
 app = Flask(__name__)
+app.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024
 UPLOADS = 0
 
 
@@ -59,6 +61,28 @@ def analyze():
     global UPLOADS
     UPLOADS += 1
     return jsonify(analyze_input(text, model=MODEL, case_id=f"uploaded-{UPLOADS}"))
+
+
+@app.post("/api/upload")
+def upload():
+    """Выгрузка чата: Telegram (result.json) или WhatsApp (.txt)."""
+    f = request.files.get("file")
+    if not f or not f.filename:
+        return jsonify({"error": "Выберите файл выгрузки: result.json из Telegram или .txt из WhatsApp"}), 400
+    try:
+        cases = load_export(f.filename, f.read())
+    except Exception:
+        return jsonify({"error": "Не удалось прочитать файл. Нужен экспорт Telegram в формате JSON или экспорт WhatsApp в .txt"}), 400
+    if not cases:
+        return jsonify({"error": "В файле не найдено сообщений"}), 400
+    global UPLOADS
+    out = []
+    for c in cases:
+        UPLOADS += 1
+        c["id"] = f"chat-{UPLOADS}"
+        out.append(analyze_chat(c, model=MODEL))
+    out.sort(key=lambda r: -r["risk"])
+    return jsonify({"chats": out})
 
 
 @app.post("/api/feedback")

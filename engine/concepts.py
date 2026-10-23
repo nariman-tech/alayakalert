@@ -39,7 +39,7 @@ MORE = re.compile(r"(вдвое|удво|(?<![\w.])[xх]\s?\d|в\s+\d+\s+раз|
 WITHDRAW = re.compile(r"(вывод|вывест|вывести|\bснять|снятие|сумм\w*\s+(\w+\s+)?откро|откро\w*\s+(\w+\s+)?сумм|разблокир|шығар)")
 COND = re.compile(r"(только после|после того|сначала|\bтогда\b|\bчтобы\b|\bесли\b|для того|иначе|\bсосын\b|кейін)")
 FEE = re.compile(r"(пополн|оплат|комисс|депозит|взнос|налог|страховк|заплат|доплат|төле|ещ[её]\s+раз\s+(\w+\s+)?(закин|скин|пополн))")
-PARTICIPATE = re.compile(r"(участи|участв|билет|номерок|номер\w* участ|\bслот|\bвход\b|доступ\w*\s+(\w+\s+){0,2}розыгр|қатыс)")
+PARTICIPATE = re.compile(r"(участи|участв|билет|номерок|номерк|номер\w* участ|\bслот|\bвход\b|доступ\w*\s+(\w+\s+){0,2}розыгр|қатыс)")
 GIVEAWAY = re.compile(r"(розыгр|разыгр|\bприз|ұтыс|сыйлық|жүлде|конкурс|\bгив|giveaway|лотере)")
 GUARANTEE = re.compile(r"(гарант|(?<!\d)100\s*%|сто процентов|точно будет|без риск|без проигрыш|міндетті түрде|кепілд|наверняка|железн\w* (схем|проход|ставк))")
 INVITE = re.compile(r"(пригла|приведи|приводи|привлек|привлеч|шақыр|в команду|в структуру|рефер|\bреф\b|с каждого)")
@@ -63,7 +63,7 @@ def _first(rx: re.Pattern, text: str, skip_negated: bool = True):
     return None
 
 
-def detect(units, add) -> None:
+def detect(units, add, local: bool = False) -> None:
     """units — список Unit (msg, orig, norm); add(signal_id, evidence, note) — из signals.detect_text."""
     by_msg: dict[int, list] = {}
     for u in units:
@@ -75,6 +75,7 @@ def detect(units, add) -> None:
         text = " ".join(u.norm for u in us)
         quote = [{"msg": msg, "text": _short(" ".join(u.orig for u in us))}]
         free_here = bool(FREE.search(text))
+        giveaway_here = bool(GIVEAWAY.search(text)) if local else giveaway_doc
 
         # «Заплати — получишь больше»: оплата раньше выгоды, после выгоды — сумма или «больше»
         pay = _first(PAY, text)
@@ -93,7 +94,7 @@ def detect(units, add) -> None:
             add("X_WITHDRAW_FEE", quote, "сочетание: вывод + доплата + условие")
 
         # Платное участие в розыгрыше: участие + оплата или сумма, без «бесплатно»
-        if giveaway_doc and not free_here:
+        if giveaway_here and not free_here:
             part = _first(PARTICIPATE, text)
             if part and (_first(PAY, text) or MONEY.search(text)):
                 add("T1_PAID", quote, "сочетание: участие + оплата или сумма")
@@ -118,7 +119,7 @@ def detect(units, add) -> None:
             add("T3_EASY_INCOME", quote, "обещание дохода")
 
         # Условия розыгрыша только в личке
-        if giveaway_doc and TERMS.search(text) and PRIVATE.search(text) and not LEGIT_TERMS.search(text):
+        if giveaway_here and TERMS.search(text) and PRIVATE.search(text) and not LEGIT_TERMS.search(text):
             add("T1_HIDDEN_TERMS", quote, "условия не опубликованы, только в личке")
 
 

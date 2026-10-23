@@ -681,10 +681,27 @@ tr.ours td { font-weight: 600; }
       '<p class="fine" style="margin:0">Вставьте пост, переписку из чата или расшифровку эфира. Для переписки и эфира — каждое сообщение с новой строки, можно со временем и ником: «[1:20] @ник: текст». Система сама найдёт ставки, победителей и приз.' + (server ? "" : " Свой текст проверяется при запуске сервера (python -m app.server); здесь доступны готовые примеры.") + '</p>' +
       '<label for="chk-text" class="muted" style="font-size:13px">Текст для проверки</label><textarea id="chk-text" placeholder="Например: вложи 5000, через неделю получишь 10 000, переводи на каспи"></textarea>' +
       '<div class="actions"><button class="btn primary" id="chk-run"' + (server ? "" : " disabled") + '>Проверить</button><span class="muted" id="chk-msg" role="status"></span></div>' +
+      '<div style="border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px"><h3>Выгрузка чата</h3>' +
+      '<p class="fine" style="margin:0">Telegram Desktop: «Экспорт истории чата» → формат JSON → файл result.json. WhatsApp: «Экспорт чата» → «Без медиафайлов» → файл .txt.' + (server ? "" : " Свой файл разбирается при запуске сервера; ниже есть готовые примеры выгрузок.") + '</p>' +
+      '<label for="chk-file" class="muted" style="font-size:13px">Файл выгрузки</label><input type="file" id="chk-file" accept=".json,.txt"' + (server ? "" : " disabled") + '>' +
+      '<div class="actions"><button class="btn primary" id="chk-upload"' + (server ? "" : " disabled") + '>Разобрать выгрузку</button><span class="muted" id="chk-up-msg" role="status"></span></div></div>' +
       '<div><div class="muted" style="font-size:13px;margin-bottom:6px">Готовые примеры</div><div class="samples">' + D.samples.map(function (s, i) { return '<button data-sample="' + i + '">' + esc(s.label) + "</button>"; }).join("") + '</div></div></section>' +
       '<section id="chk-out"><div class="panel empty">Выберите пример или вставьте свой текст.</div></section></div>';
     document.querySelectorAll("[data-sample]").forEach(function (b) {
       b.addEventListener("click", function () { var s = D.samples[+b.dataset.sample]; document.getElementById("chk-text").value = s.text; showCheck(s.result, s.text); });
+    });
+    var up = document.getElementById("chk-upload");
+    up.addEventListener("click", function () {
+      var f = document.getElementById("chk-file").files[0], msg = document.getElementById("chk-up-msg");
+      if (!f) { msg.textContent = "Выберите файл выгрузки"; return; }
+      var fd = new FormData(); fd.append("file", f);
+      msg.textContent = "Разбираю " + f.name + "…";
+      fetch("/api/upload", { method: "POST", body: fd }).then(function (r) { return r.json(); }).then(function (res) {
+        if (res.error) { msg.textContent = res.error; return; }
+        msg.textContent = res.chats.length > 1 ? "Чатов в файле: " + res.chats.length + ", показан самый опасный" : "";
+        window.__chats = res.chats;
+        showCheck(res.chats[0], "");
+      }).catch(function () { msg.textContent = "Сервер не отвечает. Запустите python -m app.server и обновите страницу."; });
     });
     var run = document.getElementById("chk-run");
     run.addEventListener("click", function () {
@@ -699,7 +716,17 @@ tr.ours td { font-weight: 600; }
   function showCheck(r, text) {
     var pos = r.signals.filter(function (s) { return s.points > 0; }), neg = r.signals.filter(function (s) { return s.points < 0; });
     var c = r.case, parsed = "";
-    if (c && c.type !== "post") {
+    if (r.chat) {
+      var ch = r.chat;
+      parsed = '<section><h3>Разбор переписки</h3><div class="kpis" style="margin-top:8px">' +
+        '<div class="kpi"><b class="num">' + ch.messages + '</b><span>сообщений в выгрузке</span></div>' +
+        (ch.messages > c.messages.length ? '<div class="kpi"><b class="num">' + (ch.window[0] + 1) + "–" + (ch.window[1] + 1) + '</b><span>самое опасное окно</span></div>' : "") +
+        '<div class="kpi"><b class="num">' + (ch.first_high == null ? "—" : ch.first_high + 1) + '</b><span>сообщение, где риск впервые высокий</span></div></div>' +
+        '<h3 style="margin-top:14px">Кто пишет подозрительное</h3><div class="chart-wrap"><table><thead><tr><th>Участник</th><th class="n">Сообщений</th><th class="n">Баллы</th><th>Признаки</th></tr></thead><tbody>' +
+        ch.authors.map(function (a) { return "<tr><td>" + esc(a.author) + '</td><td class="n">' + a.messages + '</td><td class="n">' + a.points + "</td><td>" + esc(a.signals.join(", ")) + "</td></tr>"; }).join("") +
+        "</tbody></table></div>" + (ch.source ? '<p class="fine">' + esc(ch.source) + ". Система не подключается к мессенджерам: файл выгружает участник или модератор группы.</p>" : "") + "</section>";
+      parsed += '<div class="actions"><button class="btn primary" id="chk-live">Смотреть переписку по сообщениям</button></div>';
+    } else if (c && c.type !== "post") {
       var p = c.parsed || {};
       parsed = '<section><h3>Что система нашла в тексте</h3><div class="kpis" style="margin-top:8px">' +
         '<div class="kpi"><b class="num">' + c.messages.length + '</b><span>сообщений</span></div>' +
