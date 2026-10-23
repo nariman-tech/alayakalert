@@ -1,0 +1,1107 @@
+[
+ {
+  "id": "TEAM-001",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "million tenge 💸 pervim 10 polzovatelyam 🔥"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-002",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "zaplaty 17 tis tg 💰 i poluchi 200 tys 🎁"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-003",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "СРОЧНО ‼️ первые участники получат денежный бонус 💵"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-004",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Бонус 🎁 уже ждёт тебя, подробности в личке 👀"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-005",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "1 000 000 ₸ 💸 акция только сегодня ⏳"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-006",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Код из SMS 🔐 нужен для подтверждения получения приза"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-007",
+  "type": "post",
+  "platform": "SMS",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Құттықтаймыз 🎉 сізге сыйлық бұйырды 🎁"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-008",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Инвестиция 📈 сал да, күн сайын пайда ал 💰"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-009",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Переводты жаса 💸 сосын 200к аласың 🎁"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-010",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Последний шанс ⏰ забрать выплату 💵"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-011",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "🎉 Розыгрыш наушников! Условия участия — в официальном посте 🎧"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-012",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "🎁 Мұғалімге сыйлыққа ақша жинап жатырмыз, қатысу ерікті 😊"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-013",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "💸 На экскурсию собираем по 1500 тг, чек отправьте в группу"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-014",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "🥳 Бесплатный мастер-класс по Figma, регистрация через сайт университета"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-015",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "☕ Давайте скинемся на кофе после пар? Кто хочет — пишите 😄"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-016",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Кто последний скинет на каспи, забирает весь банк 😅"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-017",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Ребят, на выпускной собираем по 2000 тг, список расходов закрепила"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-018",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Маған біртүрлі смс келді, посылка үшін код сұрап жатыр"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-019",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Подпишись и отметь друга, разыграем наушники среди подписчиков"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-020",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Говорят можно за день заработать 30к, ничего делать почти не надо"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-021",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Сәлем! Мұғалімге сыйлыққа ақша жинап жатырмыз, кім қанша бере алады?"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-022",
+  "type": "post",
+  "platform": "SMS",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Ваш аккаунт требует срочного подтверждения, иначе доступ ограничат"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-023",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "У нас в универе ярмарка, прибыль пойдет на благотворительность"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-024",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Брат, скинь код который пришёл, мне надо проверить перевод"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-025",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "В пятницу будет розыгрыш сертификата, правила выложены на странице магазина"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-026",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Kaspi бонус береді дейді, кто-то уже реально получил?"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-027",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Кто потерял флешку в 204 аудитории? Отнесли на кафедру"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-028",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Мне позвонили якобы с доставки, хотя я ничего не заказывал"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-029",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Салам, собираемся после пар в кафе, каждый сам за себя"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-030",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Инвестиция сал да, каждый день процент түседі дейді"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-031",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Друзья, продаём домашнюю выпечку на школьной ярмарке, цены в посте"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-032",
+  "type": "post",
+  "platform": "Телефон",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Сказали, что на меня оформили кредит, и нужно срочно перевести деньги"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-033",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Ата-аналар, экскурсияға автобус ақысын жұмаға дейін тапсырамыз"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-034",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Для возврата денег сначала нужно оплатить комиссию неизвестному получателю"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-035",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Всем привет, библиотека продлила срок сдачи книг до понедельника"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-036",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Мне предлагают работу: принимать переводы на свою карту за процент"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-037",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Скиньте, пожалуйста, чеки за общий заказ, я сверю сумму"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-038",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Они обещают удвоить депозит за неделю без риска"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-039",
+  "type": "post",
+  "platform": "Discord",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Кто хочет участвовать в турнире по FIFA? Регистрация бесплатная"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-040",
+  "type": "post",
+  "platform": "SMS",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Пишут от имени eGov и просят личные данные в чате"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-041",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Завтра собрание группы в 15:00, кабинет уточню позже"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-042",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Кто-нибудь знает этот магазин? Просят предоплату, отзывов почти нет"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-043",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "На день рождения преподавателя покупаем открытку, кто хочет — участвуйте"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-044",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Обещают выплату всем, кто заполнит форму с банковскими данными"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-045",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Книжный клуб в субботу, приходите со своей книгой"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-046",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Неизвестный аккаунт прислал файл APK под видом фотографии"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-047",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Сбор на лечение опубликован фондом, документы доступны на официальном сайте"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-048",
+  "type": "post",
+  "platform": "SMS",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Вам начислен приз, но сначала нужно оплатить его оформление"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-049",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Кто оставил зарядку в компьютерном классе? Забрал дежурный"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-050",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Человек предлагает купить билет на концерт, но торопит с переводом до проверки"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-051",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Открыли набор волонтёров на субботник, участие бесплатное"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-052",
+  "type": "post",
+  "platform": "Телефон",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Якобы сотрудник банка просит назвать код из сообщения"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-053",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Собираем на общий подарок одногруппнице, сумма добровольная"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-054",
+  "type": "post",
+  "platform": "TikTok",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Реклама обещает пассивный доход от платформы с известным брендом"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-055",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "На следующей неделе будет бесплатный мастер-класс по Figma"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-056",
+  "type": "post",
+  "platform": "OLX чат",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Покупатель прислал странную ссылку для получения оплаты за товар"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-057",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Кто сможет распечатать конспект для всей группы? Расходы разделим"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-058",
+  "type": "post",
+  "platform": "SMS",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Пишут, что номер телефона скоро отключат, если не подтвердить данные"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-059",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Школьный совет собирает предложения на весеннее мероприятие"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-060",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Незнакомец просит установить приложение для участия в розыгрыше"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-061",
+  "type": "post",
+  "platform": "WhatsApp",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Оплата за поездку в музей — по официальной квитанции через администрацию"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-062",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "В профиле известного человека рекламируют инвестиции, но аккаунт выглядит странно"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-063",
+  "type": "post",
+  "platform": "Telegram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Ребята, кто брал мой учебник по алгебре? Верните завтра плиз"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-064",
+  "type": "post",
+  "platform": "SMS",
+  "account": "@team",
+  "label": 1,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Сообщение о посылке требует срочно сообщить код из SMS"
+   }
+  ],
+  "images": []
+ },
+ {
+  "id": "TEAM-065",
+  "type": "post",
+  "platform": "Instagram",
+  "account": "@team",
+  "label": 0,
+  "track": 1,
+  "split": "team",
+  "messages": [
+   {
+    "t": 0,
+    "author": "",
+    "text": "Магазин объявил скидки, условия можно проверить в приложении и на официальной странице"
+   }
+  ],
+  "images": []
+ }
+]

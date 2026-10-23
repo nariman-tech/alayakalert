@@ -1,0 +1,827 @@
+{
+  "dataset": {
+    "total": 288,
+    "train": 190,
+    "test": 98,
+    "positive": 155,
+    "negative": 133
+  },
+  "ml_available": true,
+  "baseline": {
+    "train": {
+      "1": {
+        "n": 66,
+        "tp": 24,
+        "fp": 7,
+        "fn": 12,
+        "tn": 23,
+        "precision": 0.774,
+        "recall": 0.667,
+        "fpr": 0.233,
+        "f1": 0.716
+      },
+      "2": {
+        "n": 60,
+        "tp": 13,
+        "fp": 10,
+        "fn": 18,
+        "tn": 19,
+        "precision": 0.565,
+        "recall": 0.419,
+        "fpr": 0.345,
+        "f1": 0.481
+      },
+      "3": {
+        "n": 64,
+        "tp": 22,
+        "fp": 16,
+        "fn": 14,
+        "tn": 12,
+        "precision": 0.579,
+        "recall": 0.611,
+        "fpr": 0.571,
+        "f1": 0.595
+      },
+      "all": {
+        "n": 190,
+        "tp": 59,
+        "fp": 33,
+        "fn": 44,
+        "tn": 54,
+        "precision": 0.641,
+        "recall": 0.573,
+        "fpr": 0.379,
+        "f1": 0.605
+      }
+    },
+    "test": {
+      "1": {
+        "n": 35,
+        "tp": 7,
+        "fp": 0,
+        "fn": 12,
+        "tn": 16,
+        "precision": 1.0,
+        "recall": 0.368,
+        "fpr": 0.0,
+        "f1": 0.538
+      },
+      "2": {
+        "n": 31,
+        "tp": 3,
+        "fp": 0,
+        "fn": 12,
+        "tn": 16,
+        "precision": 1.0,
+        "recall": 0.2,
+        "fpr": 0.0,
+        "f1": 0.333
+      },
+      "3": {
+        "n": 32,
+        "tp": 10,
+        "fp": 3,
+        "fn": 8,
+        "tn": 11,
+        "precision": 0.769,
+        "recall": 0.556,
+        "fpr": 0.214,
+        "f1": 0.645
+      },
+      "all": {
+        "n": 98,
+        "tp": 20,
+        "fp": 3,
+        "fn": 32,
+        "tn": 43,
+        "precision": 0.87,
+        "recall": 0.385,
+        "fpr": 0.065,
+        "f1": 0.533
+      }
+    }
+  },
+  "rules": {
+    "train": {
+      "1": {
+        "n": 66,
+        "tp": 36,
+        "fp": 0,
+        "fn": 0,
+        "tn": 30,
+        "precision": 1.0,
+        "recall": 1.0,
+        "fpr": 0.0,
+        "f1": 1.0
+      },
+      "2": {
+        "n": 60,
+        "tp": 31,
+        "fp": 0,
+        "fn": 0,
+        "tn": 29,
+        "precision": 1.0,
+        "recall": 1.0,
+        "fpr": 0.0,
+        "f1": 1.0
+      },
+      "3": {
+        "n": 64,
+        "tp": 36,
+        "fp": 0,
+        "fn": 0,
+        "tn": 28,
+        "precision": 1.0,
+        "recall": 1.0,
+        "fpr": 0.0,
+        "f1": 1.0
+      },
+      "all": {
+        "n": 190,
+        "tp": 103,
+        "fp": 0,
+        "fn": 0,
+        "tn": 87,
+        "precision": 1.0,
+        "recall": 1.0,
+        "fpr": 0.0,
+        "f1": 1.0
+      }
+    },
+    "test": {
+      "1": {
+        "n": 35,
+        "tp": 16,
+        "fp": 0,
+        "fn": 3,
+        "tn": 16,
+        "precision": 1.0,
+        "recall": 0.842,
+        "fpr": 0.0,
+        "f1": 0.914
+      },
+      "2": {
+        "n": 31,
+        "tp": 15,
+        "fp": 0,
+        "fn": 0,
+        "tn": 16,
+        "precision": 1.0,
+        "recall": 1.0,
+        "fpr": 0.0,
+        "f1": 1.0
+      },
+      "3": {
+        "n": 32,
+        "tp": 17,
+        "fp": 1,
+        "fn": 1,
+        "tn": 13,
+        "precision": 0.944,
+        "recall": 0.944,
+        "fpr": 0.071,
+        "f1": 0.944
+      },
+      "all": {
+        "n": 98,
+        "tp": 48,
+        "fp": 1,
+        "fn": 4,
+        "tn": 45,
+        "precision": 0.98,
+        "recall": 0.923,
+        "fpr": 0.022,
+        "f1": 0.95
+      }
+    }
+  },
+  "full": {
+    "train": {
+      "1": {
+        "n": 66,
+        "tp": 36,
+        "fp": 0,
+        "fn": 0,
+        "tn": 30,
+        "precision": 1.0,
+        "recall": 1.0,
+        "fpr": 0.0,
+        "f1": 1.0
+      },
+      "2": {
+        "n": 60,
+        "tp": 31,
+        "fp": 0,
+        "fn": 0,
+        "tn": 29,
+        "precision": 1.0,
+        "recall": 1.0,
+        "fpr": 0.0,
+        "f1": 1.0
+      },
+      "3": {
+        "n": 64,
+        "tp": 36,
+        "fp": 0,
+        "fn": 0,
+        "tn": 28,
+        "precision": 1.0,
+        "recall": 1.0,
+        "fpr": 0.0,
+        "f1": 1.0
+      },
+      "all": {
+        "n": 190,
+        "tp": 103,
+        "fp": 0,
+        "fn": 0,
+        "tn": 87,
+        "precision": 1.0,
+        "recall": 1.0,
+        "fpr": 0.0,
+        "f1": 1.0
+      }
+    },
+    "test": {
+      "1": {
+        "n": 35,
+        "tp": 16,
+        "fp": 0,
+        "fn": 3,
+        "tn": 16,
+        "precision": 1.0,
+        "recall": 0.842,
+        "fpr": 0.0,
+        "f1": 0.914
+      },
+      "2": {
+        "n": 31,
+        "tp": 15,
+        "fp": 0,
+        "fn": 0,
+        "tn": 16,
+        "precision": 1.0,
+        "recall": 1.0,
+        "fpr": 0.0,
+        "f1": 1.0
+      },
+      "3": {
+        "n": 32,
+        "tp": 17,
+        "fp": 1,
+        "fn": 1,
+        "tn": 13,
+        "precision": 0.944,
+        "recall": 0.944,
+        "fpr": 0.071,
+        "f1": 0.944
+      },
+      "all": {
+        "n": 98,
+        "tp": 48,
+        "fp": 1,
+        "fn": 4,
+        "tn": 45,
+        "precision": 0.98,
+        "recall": 0.923,
+        "fpr": 0.022,
+        "f1": 0.95
+      }
+    }
+  },
+  "test_errors": [
+    {
+      "id": "T3-POST-0166",
+      "scheme": "Пост «вложи — получи»",
+      "label": 1,
+      "risk": 10,
+      "text": "касса взаимопомощи «nur capital»: кладёшь 3 000, через 5 дней забираешь 6 000. всё честно, это не пирамида 🙏 каспи +7 700 000 65 81"
+    },
+    {
+      "id": "T1-POST-0228",
+      "scheme": "Платный взнос за участие",
+      "label": 1,
+      "risk": 30,
+      "text": "всего 200 мест по 2 000 тг 🎟 кто успел — тот в игре за chery tiggo 7. каспи +7 700 000 77 01. победителя определим рандомом в лайве"
+    },
+    {
+      "id": "T1-POST-0026",
+      "scheme": "Платный взнос за участие",
+      "label": 1,
+      "risk": 0,
+      "text": "всего 200 мест по 3 000 тг 🎟 кто успел — тот в игре за toyota camry 75. каспи +7 700 000 20 78. победителя определим рандомом в лайве"
+    },
+    {
+      "id": "T3-POST-0202",
+      "scheme": "Банковский продукт",
+      "label": 0,
+      "risk": 45,
+      "text": "банк поднял ставку по депозиту до 15% годовых, успейте открыть до конца месяца."
+    },
+    {
+      "id": "T1-POST-0028",
+      "scheme": "Платный взнос за участие",
+      "label": 1,
+      "risk": 0,
+      "text": "всего 200 мест по 5 000 тг 🎟 кто успел — тот в игре за toyota camry 75. каспи +7 700 000 32 79. победителя определим рандомом в лайве"
+    }
+  ],
+  "stress": {
+    "baseline": {
+      "clean": {
+        "n": 98,
+        "tp": 20,
+        "fp": 3,
+        "fn": 32,
+        "tn": 43,
+        "precision": 0.87,
+        "recall": 0.385,
+        "fpr": 0.065,
+        "f1": 0.533
+      },
+      "masked": {
+        "n": 98,
+        "tp": 3,
+        "fp": 2,
+        "fn": 49,
+        "tn": 44,
+        "precision": 0.6,
+        "recall": 0.058,
+        "fpr": 0.043,
+        "f1": 0.105
+      }
+    },
+    "engine": {
+      "clean": {
+        "n": 98,
+        "tp": 48,
+        "fp": 1,
+        "fn": 4,
+        "tn": 45,
+        "precision": 0.98,
+        "recall": 0.923,
+        "fpr": 0.022,
+        "f1": 0.95
+      },
+      "masked": {
+        "n": 98,
+        "tp": 43,
+        "fp": 1,
+        "fn": 9,
+        "tn": 45,
+        "precision": 0.977,
+        "recall": 0.827,
+        "fpr": 0.022,
+        "f1": 0.896
+      }
+    },
+    "by_technique": {
+      "leet": {
+        "n": 11,
+        "baseline": 0,
+        "engine": 9
+      },
+      "translit": {
+        "n": 8,
+        "baseline": 0,
+        "engine": 3
+      },
+      "homoglyph": {
+        "n": 7,
+        "baseline": 0,
+        "engine": 6
+      },
+      "stretch": {
+        "n": 9,
+        "baseline": 2,
+        "engine": 9
+      },
+      "emoji": {
+        "n": 7,
+        "baseline": 1,
+        "engine": 7
+      },
+      "spaced": {
+        "n": 8,
+        "baseline": 0,
+        "engine": 7
+      },
+      "mixed": {
+        "n": 2,
+        "baseline": 0,
+        "engine": 2
+      }
+    }
+  },
+  "stress_examples": [
+    {
+      "how": "leet",
+      "masked": "Ұтыс ойыны! двухкомнатную квартиру в Шымкенте ойнатамыз. Қатысу үшін «Сторис, которые продают» курсын сатып алыңыз — 29 990 тг. Жеңімпазды б"
+    },
+    {
+      "how": "translit",
+      "masked": "ref sistema 🔥 za kazhdogo novogo partnyora 15% ot ego vznosa. vkhod 50 000, kidat na kaspi gold +7 700 000 56 55. stabilnyy dokhod"
+    },
+    {
+      "how": "stretch",
+      "masked": "блокнули опять 🙄 новая ссылочка на слооооты jackpotdala4.vip, старую jackpotdala1.vip не трогайте. остальное — в вип канале"
+    },
+    {
+      "how": "leet",
+      "masked": "Касса взаимопомощи «Nur Capital»: кладёшь 3 000, через 5 дней забираешь 6 000. Всё честно, это не пирамида 🙏 к@сп1 +7 700 000 65 81"
+    },
+    {
+      "how": "stretch",
+      "masked": "Ұтыс ойыны! iPhone 17 Pro ойнатамыз. Қатысу үшін «Таргет с нуля» куррррсын сатып алыңыз — 30 000 тг. Жеңімпазды барабан анықтайды."
+    },
+    {
+      "how": "stretch",
+      "masked": "стаааавки на футбол — в SportLine, а пока матч не начался, кручу рулетку там же 😅 код ALTYN100 на боннннус к деппппозиту"
+    }
+  ],
+  "time_to_detection": {
+    "cases": 30,
+    "detected_high": 30,
+    "avg_first_high_msg": 2.8,
+    "avg_share_of_conversation": 0.26,
+    "chats": 18,
+    "chats_before_first_payout": 18,
+    "chats_with_payout": 18,
+    "items": [
+      {
+        "id": "T3-CHAT-0269",
+        "type": "chat",
+        "messages": 9,
+        "first_high": 2,
+        "payout": 5,
+        "before_payout": true
+      },
+      {
+        "id": "T3-CHAT-0256",
+        "type": "chat",
+        "messages": 9,
+        "first_high": 3,
+        "payout": 6,
+        "before_payout": true
+      },
+      {
+        "id": "T1-STRE-0248",
+        "type": "stream",
+        "messages": 29,
+        "first_high": 1,
+        "payout": null,
+        "before_payout": false
+      },
+      {
+        "id": "T1-STRE-0233",
+        "type": "stream",
+        "messages": 37,
+        "first_high": 1,
+        "payout": null,
+        "before_payout": false
+      },
+      {
+        "id": "T3-CHAT-0260",
+        "type": "chat",
+        "messages": 10,
+        "first_high": 3,
+        "payout": 6,
+        "before_payout": true
+      },
+      {
+        "id": "T1-STRE-0236",
+        "type": "stream",
+        "messages": 26,
+        "first_high": 1,
+        "payout": null,
+        "before_payout": false
+      },
+      {
+        "id": "T3-CHAT-0263",
+        "type": "chat",
+        "messages": 8,
+        "first_high": 2,
+        "payout": 5,
+        "before_payout": true
+      },
+      {
+        "id": "T1-STRE-0249",
+        "type": "stream",
+        "messages": 30,
+        "first_high": 1,
+        "payout": null,
+        "before_payout": false
+      },
+      {
+        "id": "T3-CHAT-0272",
+        "type": "chat",
+        "messages": 8,
+        "first_high": 3,
+        "payout": 5,
+        "before_payout": true
+      },
+      {
+        "id": "T1-STRE-0250",
+        "type": "stream",
+        "messages": 23,
+        "first_high": 1,
+        "payout": null,
+        "before_payout": false
+      },
+      {
+        "id": "T3-CHAT-0267",
+        "type": "chat",
+        "messages": 8,
+        "first_high": 2,
+        "payout": 5,
+        "before_payout": true
+      },
+      {
+        "id": "T1-STRE-0251",
+        "type": "stream",
+        "messages": 31,
+        "first_high": 1,
+        "payout": null,
+        "before_payout": false
+      },
+      {
+        "id": "T3-CHAT-0264",
+        "type": "chat",
+        "messages": 8,
+        "first_high": 3,
+        "payout": 5,
+        "before_payout": true
+      },
+      {
+        "id": "T3-CHAT-0261",
+        "type": "chat",
+        "messages": 8,
+        "first_high": 2,
+        "payout": 5,
+        "before_payout": true
+      },
+      {
+        "id": "T1-STRE-0235",
+        "type": "stream",
+        "messages": 29,
+        "first_high": 1,
+        "payout": null,
+        "before_payout": false
+      },
+      {
+        "id": "T3-CHAT-0257",
+        "type": "chat",
+        "messages": 9,
+        "first_high": 3,
+        "payout": 6,
+        "before_payout": true
+      },
+      {
+        "id": "T3-CHAT-0273",
+        "type": "chat",
+        "messages": 9,
+        "first_high": 3,
+        "payout": 6,
+        "before_payout": true
+      },
+      {
+        "id": "T3-CHAT-0270",
+        "type": "chat",
+        "messages": 8,
+        "first_high": 2,
+        "payout": 5,
+        "before_payout": true
+      },
+      {
+        "id": "T3-CHAT-0271",
+        "type": "chat",
+        "messages": 9,
+        "first_high": 1,
+        "payout": 6,
+        "before_payout": true
+      },
+      {
+        "id": "T1-STRE-0234",
+        "type": "stream",
+        "messages": 26,
+        "first_high": 1,
+        "payout": null,
+        "before_payout": false
+      },
+      {
+        "id": "T3-CHAT-0265",
+        "type": "chat",
+        "messages": 10,
+        "first_high": 3,
+        "payout": 6,
+        "before_payout": true
+      },
+      {
+        "id": "T1-STRE-0238",
+        "type": "stream",
+        "messages": 37,
+        "first_high": 1,
+        "payout": null,
+        "before_payout": false
+      },
+      {
+        "id": "T1-STRE-0232",
+        "type": "stream",
+        "messages": 32,
+        "first_high": 1,
+        "payout": null,
+        "before_payout": false
+      },
+      {
+        "id": "T3-CHAT-0266",
+        "type": "chat",
+        "messages": 9,
+        "first_high": 2,
+        "payout": 5,
+        "before_payout": true
+      },
+      {
+        "id": "T3-CHAT-0259",
+        "type": "chat",
+        "messages": 10,
+        "first_high": 3,
+        "payout": 6,
+        "before_payout": true
+      },
+      {
+        "id": "T1-STRE-0239",
+        "type": "stream",
+        "messages": 34,
+        "first_high": 1,
+        "payout": null,
+        "before_payout": false
+      },
+      {
+        "id": "T3-CHAT-0258",
+        "type": "chat",
+        "messages": 10,
+        "first_high": 3,
+        "payout": 6,
+        "before_payout": true
+      },
+      {
+        "id": "T3-CHAT-0268",
+        "type": "chat",
+        "messages": 8,
+        "first_high": 1,
+        "payout": 4,
+        "before_payout": true
+      },
+      {
+        "id": "T1-STRE-0237",
+        "type": "stream",
+        "messages": 32,
+        "first_high": 1,
+        "payout": null,
+        "before_payout": false
+      },
+      {
+        "id": "T3-CHAT-0262",
+        "type": "chat",
+        "messages": 9,
+        "first_high": 2,
+        "payout": 5,
+        "before_payout": true
+      }
+    ]
+  },
+  "graph": {
+    "clusters": [
+      {
+        "id": 0,
+        "accounts": 21,
+        "entities": 4,
+        "tracks": [
+          1,
+          2,
+          3
+        ],
+        "max_risk": 100,
+        "cross_track": true,
+        "cases": [
+          "T1-POST-0227",
+          "T1-POST-0228",
+          "T1-STRE-0232",
+          "T1-STRE-0234",
+          "T1-STRE-0236",
+          "T1-STRE-0237",
+          "T1-STRE-0238",
+          "T1-STRE-0239",
+          "T1-STRE-0249",
+          "T1-STRE-0250",
+          "T2-POST-0230",
+          "T3-CHAT-0256",
+          "T3-CHAT-0259",
+          "T3-CHAT-0260",
+          "T3-CHAT-0262",
+          "T3-CHAT-0264",
+          "T3-CHAT-0265",
+          "T3-CHAT-0268",
+          "T3-CHAT-0271",
+          "T3-CHAT-0272",
+          "T3-POST-0231"
+        ]
+      },
+      {
+        "id": 1,
+        "accounts": 13,
+        "entities": 5,
+        "tracks": [
+          2,
+          3
+        ],
+        "max_risk": 100,
+        "cross_track": true,
+        "cases": [
+          "T2-POST-0077",
+          "T2-POST-0080",
+          "T2-POST-0082",
+          "T2-POST-0084",
+          "T2-POST-0086",
+          "T2-POST-0087",
+          "T2-POST-0095",
+          "T2-POST-0096",
+          "T2-POST-0100",
+          "T2-POST-0101",
+          "T2-POST-0102",
+          "T2-POST-0103",
+          "T2-POST-0107",
+          "T2-POST-0110",
+          "T3-POST-0184"
+        ]
+      },
+      {
+        "id": 2,
+        "accounts": 8,
+        "entities": 2,
+        "tracks": [
+          2
+        ],
+        "max_risk": 100,
+        "cross_track": false,
+        "cases": [
+          "T2-POST-0218",
+          "T2-POST-0219",
+          "T2-POST-0221",
+          "T2-POST-0222",
+          "T2-POST-0223",
+          "T2-POST-0224",
+          "T2-POST-0225",
+          "T2-POST-0226"
+        ]
+      },
+      {
+        "id": 3,
+        "accounts": 4,
+        "entities": 2,
+        "tracks": [
+          2
+        ],
+        "max_risk": 90,
+        "cross_track": false,
+        "cases": [
+          "T2-POST-0099",
+          "T2-POST-0104",
+          "T2-POST-0106",
+          "T2-POST-0109"
+        ]
+      },
+      {
+        "id": 4,
+        "accounts": 2,
+        "entities": 1,
+        "tracks": [
+          2
+        ],
+        "max_risk": 100,
+        "cross_track": false,
+        "cases": [
+          "T2-POST-0085",
+          "T2-POST-0089"
+        ]
+      },
+      {
+        "id": 5,
+        "accounts": 2,
+        "entities": 1,
+        "tracks": [
+          2
+        ],
+        "max_risk": 90,
+        "cross_track": false,
+        "cases": [
+          "T2-POST-0105",
+          "T2-POST-0108"
+        ]
+      }
+    ],
+    "nodes": 65,
+    "links": 66
+  },
+  "runtime_sec": 6.2
+}

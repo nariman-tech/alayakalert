@@ -1,0 +1,693 @@
+<title>SafeNet KZ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
+<style>
+/* Раскладка: верхняя полоса с вкладками; рабочая зона «список кейсов | карточка кейса»,
+   на телефоне — в одну колонку. Главный акцент — цифра риска на шкале 0–100 с порогами 40 и 70. */
+:root {
+  --bg: #edf1f4;
+  --surface: #ffffff;
+  --sunken: #e2e8ee;
+  --ink: #14243a;
+  --muted: #56677b;
+  --line: #d2dbe3;
+  --accent: #0b7ea0;
+  --accent-ink: #ffffff;
+  --accent-soft: #d8ecf3;
+  --high: #c0352d;
+  --high-soft: #f6dcd9;
+  --med: #a86e06;
+  --med-soft: #f4e8cc;
+  --low: #2c7a54;
+  --low-soft: #d9ede2;
+  --font-display: "Unbounded", "Golos Text", system-ui, sans-serif;
+  --font-body: "Golos Text", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1824; --surface: #152232; --sunken: #1b2b3d; --ink: #e5ecf3; --muted: #93a5b9; --line: #2a3c50;
+    --accent: #4cc0dc; --accent-ink: #062029; --accent-soft: #15394a;
+    --high: #f0675d; --high-soft: #47201e; --med: #e2a83a; --med-soft: #41331a; --low: #5bc08c; --low-soft: #173829;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1824; --surface: #152232; --sunken: #1b2b3d; --ink: #e5ecf3; --muted: #93a5b9; --line: #2a3c50;
+  --accent: #4cc0dc; --accent-ink: #062029; --accent-soft: #15394a;
+  --high: #f0675d; --high-soft: #47201e; --med: #e2a83a; --med-soft: #41331a; --low: #5bc08c; --low-soft: #173829;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); max-width: 1400px; margin: 0 auto; }
+
+/* Верхняя полоса */
+.top { background: var(--surface); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; padding-block: 14px 0; }
+.brand { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.brand h1 { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin: 0; letter-spacing: -0.01em; }
+.brand span { color: var(--muted); font-size: 14px; }
+.datanote { margin-left: auto; font-size: 13px; color: var(--muted); background: var(--sunken); border-radius: 999px; padding: 3px 12px; }
+.tabs { display: flex; gap: 4px; width: 100%; overflow-x: auto; scrollbar-width: none; }
+.tabs button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 10px 12px 12px; cursor: pointer; color: var(--muted); font-weight: 500; white-space: nowrap; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.tabs button:hover { color: var(--ink); }
+main .wrap { padding-block: 20px 48px; }
+
+/* Общие элементы */
+.pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 2px 10px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.lv-high { color: var(--high); background: var(--high-soft); }
+.lv-medium { color: var(--med); background: var(--med-soft); }
+.lv-low { color: var(--low); background: var(--low-soft); }
+.chip { display: inline-block; border: 1px solid var(--line); border-radius: 999px; padding: 1px 9px; font-size: 12.5px; color: var(--muted); background: var(--surface); }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 7px 14px; cursor: pointer; font-weight: 500; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.muted { color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+h2 { font-family: var(--font-display); font-weight: 500; font-size: 18px; margin: 0; text-wrap: balance; }
+h3 { font-size: 15px; font-weight: 600; margin: 0; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+
+/* Сводка */
+.summary { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: baseline; margin-bottom: 14px; }
+.summary b { font-family: var(--font-display); font-weight: 500; font-size: 22px; }
+.summary .item { display: flex; align-items: baseline; gap: 6px; }
+
+/* Очередь */
+.desk { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px; align-items: start; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.filters select, .filters input { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 10px; }
+.filters input { flex: 1 1 160px; min-width: 0; }
+.list { display: flex; flex-direction: column; max-height: calc(100vh - 220px); min-height: 400px; overflow-y: auto; }
+.row { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--line); cursor: pointer; background: none; border-left: 0; border-right: 0; border-top: 0; text-align: left; width: 100%; }
+.row:hover { background: var(--sunken); }
+.row[aria-current="true"] { background: var(--accent-soft); }
+.score { font-family: var(--font-display); font-weight: 700; font-size: 18px; border-radius: 8px; text-align: center; padding: 6px 0; align-self: start; }
+.row .meta { font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.row .snip { font-size: 14px; margin: 2px 0 6px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.row .sigs { display: flex; flex-wrap: wrap; gap: 4px; }
+.status-ok { color: var(--high); font-weight: 600; }
+.status-fp { color: var(--low); font-weight: 600; }
+
+/* Карточка */
+.card { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 18px; position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; }
+.card-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; }
+.big { font-family: var(--font-display); font-weight: 700; font-size: 64px; line-height: 0.9; letter-spacing: -0.03em; }
+.big.lv-high { background: none; color: var(--high); }
+.big.lv-medium { background: none; color: var(--med); }
+.big.lv-low { background: none; color: var(--low); }
+.scale { position: relative; height: 34px; margin-top: 6px; }
+.scale .bar { position: absolute; left: 0; right: 0; top: 6px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--low) 0 40%, var(--med) 40% 70%, var(--high) 70% 100%); opacity: 0.28; }
+.scale .fill { position: absolute; left: 0; top: 6px; height: 8px; border-radius: 4px; transition: width .45s ease; }
+.scale .tick { position: absolute; top: 18px; font-size: 11.5px; color: var(--muted); transform: translateX(-50%); }
+.scale .mark { position: absolute; top: 2px; width: 2px; height: 16px; background: var(--muted); opacity: .5; }
+.headline { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sumtext { margin: 6px 0 0; max-width: 62ch; }
+.combo { font-size: 13.5px; padding: 8px 12px; background: var(--sunken); border-radius: 8px; }
+.signals { display: flex; flex-direction: column; gap: 12px; }
+.sig { display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 10px; }
+.pts { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; font-size: 14px; padding-top: 1px; }
+.pts.neg { color: var(--low); }
+.sig .title { font-weight: 600; }
+.sig .hint { font-size: 13px; color: var(--muted); }
+.sig .note { font-size: 13.5px; font-weight: 600; color: var(--accent); }
+.quote { margin: 6px 0 0; padding: 6px 10px; background: var(--sunken); border-radius: 6px; font-size: 13.5px; }
+.quote small { color: var(--muted); display: block; font-size: 12px; }
+.weight { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+.w-high { background: var(--high); } .w-medium { background: var(--med); } .w-low { background: var(--muted); } .w-dampener { background: var(--low); }
+.convo { display: flex; flex-direction: column; gap: 6px; max-height: 340px; overflow-y: auto; padding-right: 4px; }
+.msg { padding: 6px 10px; border-radius: 8px; background: var(--sunken); font-size: 14px; }
+.msg.hit { background: var(--high-soft); }
+.msg .who { font-size: 12px; color: var(--muted); display: block; }
+.legal { font-size: 13.5px; border: 1px dashed var(--line); border-radius: 8px; padding: 8px 12px; color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.truth { font-size: 12.5px; color: var(--muted); }
+.empty { padding: 40px 24px; text-align: center; color: var(--muted); }
+
+/* Графики */
+svg text { fill: var(--muted); font-family: var(--font-body); font-size: 11px; }
+.grid-line { stroke: var(--line); stroke-width: 1; }
+.chart-wrap { overflow-x: auto; }
+
+/* Живой эфир */
+.live { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+.live-feed { padding: 16px; display: flex; flex-direction: column; gap: 8px; min-height: 420px; max-height: calc(100vh - 230px); overflow-y: auto; }
+.live-feed .msg { animation: pop .35s ease; }
+@keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.live-side { padding: 20px; display: flex; flex-direction: column; gap: 16px; position: sticky; top: 12px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+.controls select { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 7px 10px; max-width: 100%; min-width: 0; }
+.fired { display: flex; flex-wrap: wrap; gap: 6px; }
+.fired .chip.new { border-color: var(--high); color: var(--high); animation: pop .35s ease; }
+.alarm { padding: 10px 14px; border-radius: 8px; background: var(--high-soft); color: var(--high); font-weight: 600; }
+
+/* Сеть */
+.net { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 20px; align-items: start; }
+.clusters { display: flex; flex-direction: column; }
+.clusters button { text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 12px 14px; cursor: pointer; display: flex; flex-direction: column; gap: 3px; }
+.clusters button[aria-current="true"] { background: var(--accent-soft); }
+.clusters button:hover { background: var(--sunken); }
+.graph-box { padding: 12px; }
+.graph-box svg { width: 100%; height: auto; display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); padding: 8px 4px 0; }
+.legend i { display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: -1px; }
+.node-info { margin-top: 12px; padding: 12px 14px; }
+
+/* Метрики */
+.metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.metrics .panel { padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+.metrics .wide { grid-column: 1 / -1; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); }
+th { font-weight: 600; color: var(--muted); font-size: 13px; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+tr.ours td { font-weight: 600; }
+.bars { display: flex; flex-direction: column; gap: 10px; }
+.bar-row { display: grid; grid-template-columns: 130px minmax(0, 1fr) 48px; gap: 10px; align-items: center; font-size: 14px; }
+.bar-track { height: 12px; background: var(--sunken); border-radius: 6px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 6px; }
+.kpis { display: flex; flex-wrap: wrap; gap: 24px; }
+.kpi b { font-family: var(--font-display); font-weight: 500; font-size: 28px; display: block; }
+.kpi span { font-size: 13.5px; color: var(--muted); }
+.fine { font-size: 13px; color: var(--muted); max-width: 70ch; }
+
+/* Проверка текста */
+.check { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px; align-items: start; }
+.check textarea { width: 100%; min-height: 180px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 12px; resize: vertical; }
+.samples { display: flex; flex-wrap: wrap; gap: 6px; }
+.samples button { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 12px; cursor: pointer; font-size: 13.5px; }
+.samples button:hover { border-color: var(--accent); }
+
+@media (max-width: 900px) {
+  .desk, .live, .net, .check, .metrics { grid-template-columns: minmax(0, 1fr); }
+  .card, .live-side { position: static; max-height: none; }
+  .list { max-height: 60vh; min-height: 0; }
+  .big { font-size: 52px; }
+  .datanote { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><h1>SafeNet KZ</h1><span>Рабочее место аналитика</span></div>
+    <div class="datanote">Синтетические данные · все аккаунты вымышлены</div>
+    <nav class="tabs" role="tablist" aria-label="Разделы">
+      <button role="tab" data-view="queue">Очередь кейсов</button>
+      <button role="tab" data-view="live">Живой эфир</button>
+      <button role="tab" data-view="network">Сеть связей</button>
+      <button role="tab" data-view="metrics">Метрики</button>
+      <button role="tab" data-view="check">Проверить текст</button>
+    </nav>
+  </div>
+</header>
+<main><div class="wrap" id="view"><div class="empty">Загружаю данные…</div></div></main>
+
+<script id="sn-data" type="application/json">/*__DATA__*/null</script>
+<script>
+(function () {
+  "use strict";
+  var D = null;
+  try { D = JSON.parse(document.getElementById("sn-data").textContent.replace("/*__DATA__*/", "")); } catch (e) { D = null; }
+  var VIEWS = ["queue", "live", "network", "metrics", "check"];
+  var LV = { high: "Высокий", medium: "Средний", low: "Низкий" };
+  var TYPE = { post: "пост", chat: "чат", stream: "эфир" };
+  var TRACK = { 0: "Не определён", 1: "Розыгрыши", 2: "Казино", 3: "Пирамиды" };
+  var ENT = { phone: "Телефон", card: "Карта", promo: "Промокод", domain: "Домен", tg: "Telegram", image: "Скриншот", winner: "Победитель" };
+  var S = { view: "queue", track: "all", level: "all", split: "all", q: "", sel: null, cluster: 0, node: null,
+            live: { id: null, i: -1, playing: false, timer: null, speed: 1 }, fb: {} };
+  try { S.fb = JSON.parse(localStorage.getItem("safenet-feedback") || "{}"); } catch (e) { S.fb = {}; }
+
+  var byId = {}, resById = {}, view = document.getElementById("view");
+
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function money(n) { return Math.round(n).toLocaleString("ru-RU").replace(/,/g, " "); }
+  function pct(x) { return Math.round(x * 100) + "%"; }
+  function lvClass(l) { return "lv-" + l; }
+  function levelOf(r) { return r >= 70 ? "high" : r >= 40 ? "medium" : "low"; }
+
+  function boot(data) {
+    D = data;
+    D.cases.forEach(function (c) { byId[c.id] = c; });
+    D.results.forEach(function (r) { resById[r.id] = r; });
+    var h = (location.hash || "").replace("#", "");
+    if (VIEWS.indexOf(h) >= 0) S.view = h;
+    var sorted = sortedResults();
+    S.sel = sorted.length ? sorted[0].id : null;
+    var liveIds = D.cases.filter(function (c) { return c.type !== "post" && c.label; });
+    var stream = liveIds.filter(function (c) { return c.type === "stream"; })[0];
+    S.live.id = stream ? stream.id : (liveIds[0] && liveIds[0].id);
+    render();
+  }
+
+  function sortedResults() {
+    return D.results.slice().sort(function (a, b) { return b.risk - a.risk || a.id.localeCompare(b.id); });
+  }
+
+  /* ── Навигация ─────────────────────────────────────────── */
+  document.querySelectorAll(".tabs button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      S.view = b.dataset.view;
+      try { history.replaceState(null, "", "#" + S.view); } catch (e) {}
+      stopLive();
+      render();
+    });
+  });
+
+  function render() {
+    document.querySelectorAll(".tabs button").forEach(function (b) { b.setAttribute("aria-selected", b.dataset.view === S.view ? "true" : "false"); });
+    if (!D) { view.innerHTML = '<div class="empty">Нет данных. Запустите <b>python -m evaluation.evaluate</b>, затем сервер.</div>'; return; }
+    ({ queue: renderQueue, live: renderLive, network: renderNetwork, metrics: renderMetrics, check: renderCheck })[S.view]();
+  }
+
+  /* ── Очередь кейсов ────────────────────────────────────── */
+  function filtered() {
+    var q = S.q.trim().toLowerCase();
+    return sortedResults().filter(function (r) {
+      var c = byId[r.id];
+      if (S.track !== "all" && String(r.track) !== S.track) return false;
+      if (S.level !== "all" && r.level !== S.level) return false;
+      if (S.split !== "all" && c.split !== S.split) return false;
+      if (q) {
+        var hay = (c.account + " " + c.id + " " + c.messages.map(function (m) { return m.text; }).join(" ")).toLowerCase();
+        if (hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    });
+  }
+
+  function renderQueue() {
+    var all = D.results;
+    var cnt = { high: 0, medium: 0, low: 0 };
+    all.forEach(function (r) { cnt[r.level]++; });
+    var list = filtered();
+    if (S.sel && list.every(function (r) { return r.id !== S.sel; })) S.sel = list.length ? list[0].id : null;
+    view.innerHTML =
+      '<div class="summary"><div class="item"><b class="num">' + all.length + '</b><span class="muted">кейсов в очереди</span></div>' +
+      '<div class="item"><span class="pill lv-high"><span class="num">' + cnt.high + '</span> высокий риск</span></div>' +
+      '<div class="item"><span class="pill lv-medium"><span class="num">' + cnt.medium + '</span> средний</span></div>' +
+      '<div class="item"><span class="pill lv-low"><span class="num">' + cnt.low + '</span> низкий</span></div></div>' +
+      '<div class="desk"><section aria-label="Список кейсов"><div class="filters">' +
+      sel("f-track", S.track, [["all", "Все треки"], ["1", "Трек 1 · Розыгрыши"], ["2", "Трек 2 · Казино"], ["3", "Трек 3 · Пирамиды"], ["0", "Не определён"]]) +
+      sel("f-level", S.level, [["all", "Любой риск"], ["high", "Высокий"], ["medium", "Средний"], ["low", "Низкий"]]) +
+      sel("f-split", S.split, [["all", "Вся выборка"], ["test", "Только тест"], ["train", "Только обучение"]]) +
+      '<input id="f-q" type="search" placeholder="Поиск по тексту, нику, номеру" value="' + esc(S.q) + '" aria-label="Поиск"></div>' +
+      '<div class="panel list" id="list">' + (list.length ? list.map(rowHtml).join("") : '<div class="empty">Под фильтр ничего не попало. Сбросьте трек или уровень риска.</div>') + '</div></section>' +
+      '<section id="pane" aria-label="Карточка кейса">' + (S.sel ? cardHtml(S.sel) : '<div class="panel empty">Выберите кейс слева.</div>') + '</section></div>';
+    bindSel("f-track", "track"); bindSel("f-level", "level"); bindSel("f-split", "split");
+    var qi = document.getElementById("f-q");
+    qi.addEventListener("input", function () { S.q = qi.value; refreshList(); });
+    bindRows(); bindCard();
+  }
+
+  function refreshList() {
+    var list = filtered();
+    document.getElementById("list").innerHTML = list.length ? list.map(rowHtml).join("") : '<div class="empty">Под фильтр ничего не попало. Сбросьте трек или уровень риска.</div>';
+    bindRows();
+  }
+
+  function sel(id, val, opts) {
+    return '<select id="' + id + '" aria-label="Фильтр">' + opts.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === val ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select>";
+  }
+  function bindSel(id, key) {
+    var el = document.getElementById(id);
+    el.addEventListener("change", function () { S[key] = el.value; renderQueue(); });
+  }
+
+  function rowHtml(r) {
+    var c = byId[r.id];
+    var pos = r.signals.filter(function (s) { return s.points > 0; }).slice(0, 3);
+    var fb = S.fb[r.id];
+    return '<button class="row" data-id="' + r.id + '"' + (r.id === S.sel ? ' aria-current="true"' : "") + '>' +
+      '<span class="score num ' + lvClass(r.level) + '">' + r.risk + "</span><span>" +
+      '<span class="meta"><span>' + TYPE[c.type] + " · " + esc(c.platform) + "</span><span>" + esc(c.account) + "</span>" +
+      (r.track ? "<span>" + TRACK[r.track] + "</span>" : "") +
+      (fb ? '<span class="' + (fb === "ok" ? "status-ok" : "status-fp") + '">' + (fb === "ok" ? "Подтверждено" : "Ложное срабатывание") + "</span>" : "") + "</span>" +
+      '<span class="snip">' + esc(c.messages[0] ? c.messages[0].text : "") + "</span>" +
+      '<span class="sigs">' + pos.map(function (s) { return '<span class="chip">' + esc(s.title) + "</span>"; }).join("") + "</span></span></button>";
+  }
+
+  function bindRows() {
+    document.querySelectorAll(".row").forEach(function (b) {
+      b.addEventListener("click", function () {
+        S.sel = b.dataset.id;
+        document.querySelectorAll(".row").forEach(function (x) { x.setAttribute("aria-current", x.dataset.id === S.sel ? "true" : "false"); });
+        document.getElementById("pane").innerHTML = cardHtml(S.sel);
+        bindCard();
+        if (window.innerWidth < 900) document.getElementById("pane").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  }
+
+  function scaleHtml(risk, level) {
+    var col = level === "high" ? "var(--high)" : level === "medium" ? "var(--med)" : "var(--low)";
+    return '<div class="scale" aria-hidden="true"><div class="bar"></div><div class="fill" style="width:' + risk + '%;background:' + col + '"></div>' +
+      '<div class="mark" style="left:40%"></div><div class="mark" style="left:70%"></div>' +
+      '<div class="tick" style="left:0%;transform:none">0</div><div class="tick" style="left:40%">40</div><div class="tick" style="left:70%">70</div><div class="tick" style="left:100%;transform:translateX(-100%)">100</div></div>';
+  }
+
+  function cardHtml(id) {
+    var r = resById[id], c = byId[id];
+    var hitMsgs = {};
+    r.signals.forEach(function (s) { if (s.points > 0) (s.evidence || []).forEach(function (e) { if (e.msg >= 0) hitMsgs[e.msg] = 1; }); });
+    var pos = r.signals.filter(function (s) { return s.points > 0; });
+    var neg = r.signals.filter(function (s) { return s.points < 0; });
+    var fb = S.fb[id];
+    var h = '<article class="panel card"><div class="card-head"><div class="big num ' + lvClass(r.level) + '">' + r.risk + '</div>' +
+      '<div><div class="headline"><span class="pill ' + lvClass(r.level) + '">' + LV[r.level] + ' риск</span><span class="chip">' + esc(r.track_name) + "</span>" +
+      '<span class="chip">' + TYPE[c.type] + " · " + esc(c.platform) + '</span></div><div class="muted" style="margin-top:4px">' + esc(c.account) + " · " + esc(c.title) + " · " + c.id + "</div>" +
+      scaleHtml(r.risk, r.level) + "</div></div>" +
+      '<p class="sumtext">' + esc(r.summary) + "</p>";
+    h += combosHtml(r);
+    if (pos.length) h += '<section class="signals" aria-label="Сработавшие признаки"><h3>Почему кейс помечен</h3>' + pos.map(sigHtml).join("") + "</section>";
+    if (neg.length) h += '<section class="signals" aria-label="Снижающие факторы"><h3>Что снижает риск</h3>' + neg.map(sigHtml).join("") + "</section>";
+    if (c.type === "stream" && r.stream && r.stream.pot_series && r.stream.pot_series.length) h += '<section><h3>Рост банка во время эфира</h3>' + potChart(r.stream.pot_series, c, null) + streamStats(r.stream) + "</section>";
+    if (c.messages.length > 1 || (c.images && c.images.length)) {
+      h += '<section><h3>' + (c.type === "stream" ? "Расшифровка эфира" : "Переписка") + '</h3><div class="convo">' +
+        c.messages.map(function (m, i) {
+          var img = (c.images || []).filter(function (x) { return x.msg === i; }).map(function (x) { return '<span class="who">Скриншот: «' + esc(x.ocr) + "»</span>"; }).join("");
+          return '<div class="msg' + (hitMsgs[i] ? " hit" : "") + '"><span class="who">' + esc(m.author) + " · " + (c.type === "stream" ? fmtT(m.t) : "сообщение " + (i + 1)) + "</span>" + esc(m.text) + img + "</div>";
+        }).join("") + "</div></section>";
+    } else {
+      h += '<section><h3>Текст публикации</h3><div class="msg">' + esc(c.messages[0].text) + "</div></section>";
+    }
+    if (r.legal_hint) h += '<div class="legal">' + esc(r.legal_hint) + "</div>";
+    h += '<div class="actions"><button class="btn" data-fb="ok" aria-pressed="' + (fb === "ok") + '">Подтвердить нарушение</button>' +
+      '<button class="btn" data-fb="fp" aria-pressed="' + (fb === "fp") + '">Ложное срабатывание</button>' +
+      '<button class="btn" data-copy="1">Скопировать справку</button><span class="muted" id="copy-msg" role="status"></span></div>' +
+      '<div class="truth">Разметка датасета: ' + (c.label ? "подозрительный" : "честный") + " · схема «" + esc(c.scheme_name) + "» · " + (c.split === "test" ? "тестовая" : "обучающая") + " часть</div></article>";
+    return h;
+  }
+
+  function combosHtml(r) {
+    return (r.combos || []).map(function (x) { return '<div class="combo">Ключевая комбинация: ' + esc(x) + " — риск не ниже 70</div>"; }).join("") +
+      (r.combos_med || []).map(function (x) { return '<div class="combo">Стоит проверить: ' + esc(x) + " — риск не ниже 45</div>"; }).join("");
+  }
+
+  function sigHtml(s) {
+    var ev = (s.evidence || []).map(function (e) {
+      var where = e.msg >= 0 ? "сообщение " + (e.msg + 1) : "анализ поведения и связей";
+      return '<div class="quote"><small>' + where + "</small>" + esc(e.text) + "</div>";
+    }).join("");
+    return '<div class="sig"><div class="pts' + (s.points < 0 ? " neg" : "") + '">' + (s.points > 0 ? "+" : "") + s.points + "</div><div>" +
+      '<div class="title"><span class="weight w-' + s.weight + '"></span>' + esc(s.title) + "</div>" +
+      (s.note ? '<div class="note">' + esc(s.note) + "</div>" : "") + '<div class="hint">' + esc(s.hint) + "</div>" + ev + "</div></div>";
+  }
+
+  function streamStats(st) {
+    var wins = Object.entries(st.win_counts || {}).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 3);
+    var last = Object.entries(st.last_bidders || {}).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 3);
+    return '<div class="muted" style="font-size:13.5px;margin-top:6px">Собрано ' + money(st.total_collected) + " тг за " + st.rounds + " раундов. " +
+      (wins.length ? "Победы: " + wins.map(function (w) { return esc(w[0]) + " — " + w[1]; }).join(", ") + ". " : "") +
+      (last.length ? "Последняя ставка в конце раунда: " + last.map(function (w) { return esc(w[0]) + " — " + w[1]; }).join(", ") + "." : "") + "</div>";
+  }
+
+  function fmtT(t) { var m = Math.floor(t / 60), s = Math.floor(t % 60); return m + ":" + (s < 10 ? "0" : "") + s; }
+
+  function potChart(series, c, untilT) {
+    var W = 640, H = 200, pl = 64, pr = 16, pt = 14, pb = 28;
+    var maxT = series[series.length - 1].t || 1;
+    var endT = c.messages.length ? Math.max(maxT, c.messages[c.messages.length - 1].t) : maxT;
+    var maxV = series[series.length - 1].total;
+    var prize = (c.rules && c.rules.start_prize) || 0;
+    var top = Math.max(maxV, prize) * 1.08;
+    var pts = series.filter(function (p) { return untilT == null || p.t <= untilT; });
+    function X(t) { return pl + (t / endT) * (W - pl - pr); }
+    function Y(v) { return pt + (1 - v / top) * (H - pt - pb); }
+    var g = "";
+    var step = niceStep(top / 4);
+    for (var v = 0; v <= top; v += step) g += '<line class="grid-line" x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(v) + '" y2="' + Y(v) + '"/><text x="' + (pl - 8) + '" y="' + (Y(v) + 4) + '" text-anchor="end">' + money(v) + "</text>";
+    for (var m = 0; m <= endT; m += niceStep(endT / 5)) g += '<text x="' + X(m) + '" y="' + (H - 8) + '" text-anchor="middle">' + Math.round(m / 60) + " мин</text>";
+    if (prize) g += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(prize) + '" y2="' + Y(prize) + '" stroke="var(--accent)" stroke-dasharray="4 4"/><text x="' + (W - pr) + '" y="' + (Y(prize) - 6) + '" text-anchor="end" style="fill:var(--accent)">приз раунда ' + money(prize) + " тг</text>";
+    if (pts.length) {
+      var d = "M" + X(0) + "," + Y(0) + pts.map(function (p) { return " L" + X(p.t) + "," + Y(p.total); }).join("");
+      var last = pts[pts.length - 1];
+      g += '<path d="' + d + " L" + X(last.t) + "," + Y(0) + ' Z" fill="var(--high)" fill-opacity="0.12"/>';
+      g += '<path d="' + d + '" fill="none" stroke="var(--high)" stroke-width="2"/>';
+      g += '<circle cx="' + X(last.t) + '" cy="' + Y(last.total) + '" r="4" fill="var(--high)"/>';
+      g += '<text x="' + Math.min(X(last.t), W - pr - 4) + '" y="' + (Y(last.total) - 10) + '" text-anchor="end" style="fill:var(--ink);font-weight:600">' + money(last.total) + " тг</text>";
+    }
+    return '<div class="chart-wrap"><svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Рост собранной суммы во время эфира" style="width:100%;min-width:420px">' + g + "</svg></div>";
+  }
+  function niceStep(x) { var p = Math.pow(10, Math.floor(Math.log10(Math.max(x, 1)))); var n = x / p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * p; }
+
+  function bindCard() {
+    document.querySelectorAll("[data-fb]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var v = b.dataset.fb;
+        if (S.fb[S.sel] === v) delete S.fb[S.sel]; else S.fb[S.sel] = v;
+        try { localStorage.setItem("safenet-feedback", JSON.stringify(S.fb)); } catch (e) {}
+        if (D.mode === "server") { try { fetch("/api/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: S.sel, verdict: S.fb[S.sel] || null }) }).catch(function () {}); } catch (e) {} }
+        document.getElementById("pane").innerHTML = cardHtml(S.sel); bindCard(); refreshList();
+      });
+    });
+    var cp = document.querySelector("[data-copy]");
+    if (cp) cp.addEventListener("click", function () {
+      var txt = reportText(S.sel), msg = document.getElementById("copy-msg");
+      function done(ok) { msg.textContent = ok ? "Справка скопирована" : "Выделите текст справки вручную"; }
+      try { navigator.clipboard.writeText(txt).then(function () { done(true); }, function () { done(false); }); } catch (e) { done(false); }
+    });
+  }
+
+  function reportText(id) {
+    var r = resById[id], c = byId[id];
+    var L = ["Справка SafeNet KZ по кейсу " + id, "Источник: " + c.platform + ", " + c.account + " (" + TYPE[c.type] + ")",
+      "Уровень риска: " + LV[r.level] + " (" + r.risk + " из 100), " + r.track_name, "", r.summary, ""];
+    r.signals.filter(function (s) { return s.points > 0; }).forEach(function (s) {
+      L.push("• " + s.title + (s.note ? " — " + s.note : "") + " (+" + s.points + ")");
+      (s.evidence || []).forEach(function (e) { L.push("    «" + e.text + "»"); });
+    });
+    if (r.legal_hint) L.push("", r.legal_hint);
+    L.push("", "Система показывает признаки возможного нарушения. Законность проверяет специалист.");
+    return L.join("\n");
+  }
+
+  /* ── Живой эфир ────────────────────────────────────────── */
+  function liveCases() { return D.cases.filter(function (c) { return c.type !== "post" && D.timelines[c.id]; }); }
+
+  function renderLive() {
+    var opts = liveCases().sort(function (a, b) { return b.label - a.label || (a.type === "stream" ? -1 : 1); });
+    var c = byId[S.live.id];
+    view.innerHTML = '<div class="controls"><select id="live-sel" aria-label="Кейс для воспроизведения">' + opts.map(function (o) {
+      return '<option value="' + o.id + '"' + (o.id === S.live.id ? " selected" : "") + ">" + (o.type === "stream" ? "Эфир" : "Чат") + " · " + esc(o.title) + " · " + esc(o.account) + (o.label ? "" : " (честный)") + "</option>";
+    }).join("") + '</select><button class="btn primary" id="live-play">' + (S.live.playing ? "Пауза" : (S.live.i >= 0 && S.live.i < c.messages.length - 1 ? "Продолжить" : "Запустить")) + '</button>' +
+      '<button class="btn" id="live-reset">Сначала</button><select id="live-speed" aria-label="Скорость">' +
+      [[1, "Скорость ×1"], [2, "×2"], [4, "×4"]].map(function (s) { return '<option value="' + s[0] + '"' + (S.live.speed === s[0] ? " selected" : "") + ">" + s[1] + "</option>"; }).join("") +
+      '</select></div><div class="live"><div class="panel live-feed" id="feed" aria-live="polite"></div><aside class="panel live-side" id="live-side"></aside></div>';
+    document.getElementById("live-sel").addEventListener("change", function (e) { stopLive(); S.live.id = e.target.value; S.live.i = -1; renderLive(); });
+    document.getElementById("live-play").addEventListener("click", function () { if (S.live.playing) stopLive(); else playLive(); renderLiveButtons(); });
+    document.getElementById("live-reset").addEventListener("click", function () { stopLive(); S.live.i = -1; renderLive(); });
+    document.getElementById("live-speed").addEventListener("change", function (e) { S.live.speed = +e.target.value; });
+    drawFeed(true); drawSide();
+  }
+  function renderLiveButtons() {
+    var c = byId[S.live.id], b = document.getElementById("live-play");
+    if (b) b.textContent = S.live.playing ? "Пауза" : (S.live.i >= 0 && S.live.i < c.messages.length - 1 ? "Продолжить" : "Запустить");
+  }
+  function playLive() {
+    var c = byId[S.live.id];
+    if (S.live.i >= c.messages.length - 1) S.live.i = -1;
+    if (S.live.i < 0) drawFeed(true);
+    S.live.playing = true;
+    tick();
+  }
+  function tick() {
+    var c = byId[S.live.id];
+    if (!S.live.playing) return;
+    if (S.live.i >= c.messages.length - 1) { stopLive(); renderLiveButtons(); return; }
+    S.live.i++;
+    appendMsg(c, S.live.i);
+    drawSide();
+    S.live.timer = setTimeout(tick, 1100 / S.live.speed);
+  }
+  function stopLive() { S.live.playing = false; if (S.live.timer) clearTimeout(S.live.timer); S.live.timer = null; }
+
+  function drawFeed(reset) {
+    var c = byId[S.live.id], feed = document.getElementById("feed");
+    if (!feed) return;
+    if (reset) feed.innerHTML = "";
+    if (S.live.i < 0) { feed.innerHTML = '<div class="empty">Нажмите «Запустить»: сообщения пойдут одно за другим, а справа будет видно, как система замечает признаки и поднимает риск.</div>'; return; }
+    for (var i = 0; i <= S.live.i; i++) appendMsg(c, i, true);
+  }
+  function appendMsg(c, i, quiet) {
+    var feed = document.getElementById("feed");
+    if (!feed) return;
+    if (i === 0 || feed.querySelector(".empty")) feed.innerHTML = "";
+    var tl = D.timelines[c.id][i];
+    var m = c.messages[i];
+    var img = (c.images || []).filter(function (x) { return x.msg === i; }).map(function (x) { return '<span class="who">Скриншот: «' + esc(x.ocr) + "»</span>"; }).join("");
+    var div = document.createElement("div");
+    div.className = "msg" + (tl.new.length ? " hit" : "");
+    div.innerHTML = '<span class="who">' + esc(m.author) + " · " + (c.type === "stream" ? fmtT(m.t) : "сообщение " + (i + 1)) + "</span>" + esc(m.text) + img;
+    if (quiet) div.style.animation = "none";
+    feed.appendChild(div);
+    feed.scrollTop = feed.scrollHeight;
+  }
+  function drawSide() {
+    var c = byId[S.live.id], side = document.getElementById("live-side"), tl = D.timelines[c.id];
+    if (!side) return;
+    var cur = S.live.i >= 0 ? tl[S.live.i] : { risk: 0, level: "low", new: [] };
+    var firedIds = {};
+    for (var i = 0; i <= S.live.i; i++) tl[i].new.forEach(function (x) { firedIds[x] = i; });
+    var firstHigh = null;
+    for (var j = 0; j <= S.live.i; j++) if (tl[j].level === "high") { firstHigh = j; break; }
+    var cat = D.catalog;
+    var h = '<div><div class="muted">Риск сейчас</div><div class="card-head" style="grid-template-columns:auto minmax(0,1fr)"><div class="big num ' + lvClass(cur.level) + '">' + cur.risk + "</div>" +
+      '<div><span class="pill ' + lvClass(cur.level) + '">' + LV[cur.level] + " риск</span>" + scaleHtml(cur.risk, cur.level) + "</div></div></div>";
+    if (firstHigh != null) h += '<div class="alarm">Высокий риск на сообщении ' + (firstHigh + 1) + " из " + c.messages.length + " — кейс уже в очереди аналитика</div>";
+    var ids = Object.keys(firedIds).filter(function (k) { return cat[k] && cat[k].points > 0; });
+    var neg = Object.keys(firedIds).filter(function (k) { return cat[k] && cat[k].points < 0; });
+    h += '<div><h3 style="margin-bottom:8px">Сработавшие признаки</h3><div class="fired">' + (ids.length ? ids.map(function (k) {
+      return '<span class="chip' + (firedIds[k] === S.live.i ? " new" : "") + '">' + esc(cat[k].title) + " +" + cat[k].points + "</span>";
+    }).join("") : '<span class="muted">Пока ничего подозрительного</span>') + "</div></div>";
+    if (neg.length) h += '<div><h3 style="margin-bottom:8px">Снижают риск</h3><div class="fired">' + neg.map(function (k) { return '<span class="chip">' + esc(cat[k].title) + " " + cat[k].points + "</span>"; }).join("") + "</div></div>";
+    var r = resById[c.id];
+    if (c.type === "stream" && r.stream && r.stream.pot_series.length) {
+      var untilT = S.live.i >= 0 ? c.messages[S.live.i].t : -1;
+      h += '<div><h3 style="margin-bottom:6px">Банк эфира</h3>' + potChart(r.stream.pot_series, c, untilT) + "</div>";
+    }
+    h += '<div class="fine">Сетевые связи в этом режиме не учитываются: система видит только то, что уже прозвучало в эфире или чате.</div>';
+    side.innerHTML = h;
+  }
+
+  /* ── Сеть связей ───────────────────────────────────────── */
+  function renderNetwork() {
+    var g = D.graph;
+    if (!g.clusters.length) { view.innerHTML = '<div class="panel empty">Связей между аккаунтами не найдено.</div>'; return; }
+    var cl = g.clusters[S.cluster] || g.clusters[0];
+    view.innerHTML = '<div class="net"><section class="panel clusters" aria-label="Группы связанных аккаунтов">' + g.clusters.map(function (k) {
+      var nodes = g.nodes.filter(function (n) { return n.cluster === k.id && n.kind === "entity"; });
+      var types = {}; nodes.forEach(function (n) { types[ENT[n.type]] = 1; });
+      return '<button data-cl="' + k.id + '"' + (k.id === cl.id ? ' aria-current="true"' : "") + '><span><b class="num">' + k.accounts + "</b> аккаунтов · " +
+        (k.tracks.length ? "треки " + k.tracks.join(", ") : "трек не определён") + (k.cross_track ? ' <span class="pill lv-high">одна сеть — разные схемы</span>' : "") + "</span>" +
+        '<span class="muted" style="font-size:13px">Связаны через: ' + Object.keys(types).join(", ").toLowerCase() + " · макс. риск " + k.max_risk + "</span></button>";
+    }).join("") + '</section><section><div class="panel graph-box">' + graphSvg(cl) +
+      '<div class="legend"><span><i style="background:var(--high);border-radius:50%"></i>аккаунт, высокий риск</span><span><i style="background:var(--med);border-radius:50%"></i>средний</span><span><i style="background:var(--low);border-radius:50%"></i>низкий: связь есть, текст не помечен</span>' +
+      '<span><i style="background:var(--surface);border:2px solid var(--accent)"></i>общий реквизит: телефон, промокод, скриншот, победитель</span></div></div><div id="node-info"></div></section></div>';
+    document.querySelectorAll("[data-cl]").forEach(function (b) { b.addEventListener("click", function () { S.cluster = +b.dataset.cl; S.node = null; renderNetwork(); }); });
+    document.querySelectorAll("[data-node]").forEach(function (n) {
+      n.addEventListener("click", function () { S.node = n.dataset.node; showNode(); });
+      n.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); S.node = n.dataset.node; showNode(); } });
+    });
+    showNode();
+  }
+  function graphSvg(cl) {
+    var g = D.graph, nodes = g.nodes.filter(function (n) { return n.cluster === cl.id; });
+    var ids = {}; nodes.forEach(function (n) { ids[n.id] = n; });
+    var links = g.links.filter(function (l) { return ids[l.source] && ids[l.target]; });
+    var W = 760, H = 500, pad = 50;
+    var xs = nodes.map(function (n) { return n.x; }), ys = nodes.map(function (n) { return n.y; });
+    var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs), y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+    var sx = (x1 - x0) || 1, sy = (y1 - y0) || 1;
+    function X(n) { return nodes.length < 3 ? W / 2 + (n.kind === "entity" ? 0 : (n.x - x0 - sx / 2) * 300 / sx) : pad + (n.x - x0) / sx * (W - 2 * pad); }
+    function Y(n) { return nodes.length < 3 ? H / 2 + (n.kind === "entity" ? 0 : 60) : pad + (n.y - y0) / sy * (H - 2 * pad); }
+    var s = "";
+    links.forEach(function (l) { var a = ids[l.source], b = ids[l.target]; s += '<line x1="' + X(a) + '" y1="' + Y(a) + '" x2="' + X(b) + '" y2="' + Y(b) + '" stroke="var(--line)" stroke-width="1.4"/>'; });
+    nodes.filter(function (n) { return n.kind === "account"; }).forEach(function (n) {
+      var lv = levelOf(n.risk), col = lv === "high" ? "var(--high)" : lv === "medium" ? "var(--med)" : "var(--low)";
+      s += '<g data-node="' + esc(n.id) + '" tabindex="0" role="button" aria-label="Аккаунт ' + esc(n.label) + '" style="cursor:pointer"><circle cx="' + X(n) + '" cy="' + Y(n) + '" r="' + (S.node === n.id ? 10 : 7) + '" fill="' + col + '"/>' +
+        (nodes.length <= 14 || S.node === n.id ? '<text x="' + (X(n) + 10) + '" y="' + (Y(n) + 4) + '">' + esc(n.label) + "</text>" : "") + "</g>";
+    });
+    nodes.filter(function (n) { return n.kind === "entity"; }).forEach(function (n) {
+      s += '<g data-node="' + esc(n.id) + '" tabindex="0" role="button" aria-label="' + ENT[n.type] + " " + esc(n.label) + '" style="cursor:pointer"><rect x="' + (X(n) - 9) + '" y="' + (Y(n) - 9) + '" width="18" height="18" rx="4" fill="var(--surface)" stroke="var(--accent)" stroke-width="' + (S.node === n.id ? 3.5 : 2.5) + '"/>' +
+        '<text x="' + X(n) + '" y="' + (Y(n) - 15) + '" text-anchor="middle" style="fill:var(--ink);font-weight:600">' + ENT[n.type] + " " + esc(n.label) + "</text></g>";
+    });
+    return '<div class="chart-wrap"><svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Граф связей выбранной группы" style="min-width:480px">' + s + "</svg></div>";
+  }
+  function showNode() {
+    var box = document.getElementById("node-info");
+    if (!box) return;
+    var n = S.node && D.graph.nodes.filter(function (x) { return x.id === S.node; })[0];
+    if (!n) { box.innerHTML = '<div class="panel node-info muted">Нажмите на аккаунт или общий реквизит, чтобы увидеть связанные кейсы.</div>'; return; }
+    var cs = n.cases.map(function (id) { return resById[id]; }).sort(function (a, b) { return b.risk - a.risk; });
+    box.innerHTML = '<div class="panel node-info"><h3>' + (n.kind === "account" ? "Аккаунт " : ENT[n.type] + " ") + esc(n.label) + '</h3><div class="muted" style="margin-bottom:8px">Связанных кейсов: ' + cs.length + "</div>" +
+      cs.map(function (r) { var c = byId[r.id]; return '<div style="display:flex;gap:10px;align-items:center;padding:4px 0"><span class="pill ' + lvClass(r.level) + ' num">' + r.risk + '</span><a href="#queue" data-open="' + r.id + '">' + esc(c.account) + " · " + TYPE[c.type] + " · " + TRACK[r.track] + "</a></div>"; }).join("") + "</div>";
+    box.querySelectorAll("[data-open]").forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); S.sel = a.dataset.open; S.view = "queue"; S.track = "all"; S.level = "all"; S.split = "all"; S.q = ""; render(); }); });
+  }
+
+  /* ── Метрики ───────────────────────────────────────────── */
+  function renderMetrics() {
+    var M = D.metrics, t = M.full.test.all, b = M.baseline.test.all, st = M.stress, td = M.time_to_detection;
+    var names = { baseline: "Поиск по словам", rules: "Признаки без сети и ML", full: "SafeNet KZ" };
+    function row(m, tr) { var x = M[m].test[tr]; return '<tr class="' + (m === "full" ? "ours" : "") + '"><td>' + names[m] + '</td><td>' + (tr === "all" ? "все" : TRACK[tr]) + '</td><td class="n">' + pct(x.precision) + '</td><td class="n">' + pct(x.recall) + '</td><td class="n">' + pct(x.fpr) + "</td></tr>"; }
+    function bar(label, v, col) { return '<div class="bar-row"><span>' + label + '</span><div class="bar-track"><div class="bar-fill" style="width:' + (v * 100) + "%;background:" + col + '"></div></div><span class="num">' + pct(v) + "</span></div>"; }
+    var tech = { emoji: "эмодзи", homoglyph: "латинские двойники", leet: "цифры вместо букв", mixed: "смешанная", spaced: "разрядка", stretch: "растянутые буквы", translit: "транслит" };
+    view.innerHTML = '<div class="metrics">' +
+      '<section class="panel wide"><h2>Тестовая выборка: другие формулировки, сленг, казахский, транслит</h2><div class="kpis">' +
+      '<div class="kpi"><b class="num">' + pct(t.precision) + '</b><span>точность (precision)</span></div><div class="kpi"><b class="num">' + pct(t.recall) + '</b><span>полнота (recall), у словаря ' + pct(b.recall) + '</span></div>' +
+      '<div class="kpi"><b class="num">' + pct(t.fpr) + '</b><span>ложных срабатываний</span></div><div class="kpi"><b class="num">' + M.dataset.test + '</b><span>кейсов в тесте из ' + M.dataset.total + "</span></div></div>" +
+      '<div class="chart-wrap"><table><thead><tr><th>Метод</th><th>Трек</th><th class="n">Precision</th><th class="n">Recall</th><th class="n">Ложные</th></tr></thead><tbody>' +
+      ["1", "2", "3", "all"].map(function (tr) { return row("baseline", tr) + row("full", tr); }).join("") + "</tbody></table></div>" +
+      '<p class="fine">Кейс считается помеченным при среднем или высоком риске (40 и выше). Тестовая часть написана в другой манере, чем обучающая: сленг, казахский, транслит. Данные синтетические: на реальном потоке цифры будут ниже, их нужно перепроверить на выборке, размеченной аналитиками.</p></section>' +
+      '<section class="panel"><h2>Стресс-тест маскировки</h2><p class="fine">Тексты теста испорчены так, как это делают мошенники: «к@зин0», «к а з и н о», эмодзи, латинские буквы-двойники, транслит.</p><div class="bars">' +
+      bar("Словарь, чистый текст", st.baseline.clean.recall, "var(--muted)") + bar("Словарь, маскировка", st.baseline.masked.recall, "var(--muted)") +
+      bar("SafeNet, чистый текст", st.engine.clean.recall, "var(--accent)") + bar("SafeNet, маскировка", st.engine.masked.recall, "var(--accent)") + '</div>' +
+      '<div class="chart-wrap"><table><thead><tr><th>Техника</th><th class="n">Словарь</th><th class="n">SafeNet</th></tr></thead><tbody>' +
+      Object.keys(st.by_technique).sort().map(function (k) { var x = st.by_technique[k]; return "<tr><td>" + (tech[k] || k) + '</td><td class="n">' + x.baseline + " из " + x.n + '</td><td class="n">' + x.engine + " из " + x.n + "</td></tr>"; }).join("") +
+      "</tbody></table></div></section>" +
+      '<section class="panel"><h2>Скорость обнаружения</h2><div class="kpis"><div class="kpi"><b class="num">' + td.avg_first_high_msg + '</b><span>сообщение, на котором риск становится высоким (в среднем)</span></div>' +
+      '<div class="kpi"><b class="num">' + pct(td.avg_share_of_conversation) + '</b><span>разговора нужно увидеть</span></div>' +
+      '<div class="kpi"><b class="num">' + td.chats_before_first_payout + " из " + td.chats_with_payout + '</b><span>чатов пирамид помечены до первого «скриншота выплаты»</span></div></div>' +
+      '<p class="fine">Чем раньше схема попадает к аналитику, тем меньше людей успевает вложить деньги. Высокий риск достигнут в ' + td.detected_high + " из " + td.cases + " подозрительных чатов и эфиров.</p></section>" +
+      teamHtml() + '<section class="panel wide"><h2>Датасет</h2><p class="fine">' + M.dataset.total + " синтетических кейсов: " + M.dataset.positive + " подозрительных и " + M.dataset.negative +
+      " честных, из них трудные примеры — бесплатные розыгрыши, благотворительные аукционы, банковские депозиты, родительские сборы, новости и предупреждения. Обучающая часть — " + M.dataset.train + " кейсов, тестовая — " + M.dataset.test + ". Аккаунты, номера, карты, домены и бренды вымышлены.</p></section></div>";
+  }
+
+  function teamHtml() {
+    var rows = (D.team && D.team.rows) || [];
+    if (!rows.length) return "";
+    return '<section class="panel wide"><h2>Проверка на текстах команды</h2><p class="fine">Тексты писали участники команды своими словами. Числа записаны в момент замера и не пересчитывались.</p>' +
+      '<div class="chart-wrap"><table><thead><tr><th>Набор</th><th>Роль</th><th>Когда</th><th class="n">Найдено подозрительных</th><th class="n">Ложных срабатываний</th></tr></thead><tbody>' +
+      rows.map(function (x) {
+        var found = x.found == null ? "—" : x.found + " из " + x.positives;
+        var fls = x.false == null ? "—" : x.false + " из " + x.negatives;
+        return "<tr><td>" + esc(x.set) + (x.comment ? '<div class="muted" style="font-size:12.5px">' + esc(x.comment) + "</div>" : "") + "</td><td>" + esc(x.role) + "</td><td>" + esc(x.when) +
+          '</td><td class="n">' + found + '</td><td class="n">' + fls + "</td></tr>";
+      }).join("") + "</tbody></table></div></section>";
+  }
+
+  /* ── Проверка текста ───────────────────────────────────── */
+  function renderCheck() {
+    var server = D.mode === "server";
+    view.innerHTML = '<div class="check"><section class="panel" style="padding:18px 20px;display:flex;flex-direction:column;gap:12px"><h2>Проверить текст</h2>' +
+      '<p class="fine" style="margin:0">Вставьте пост, сообщение из чата или расшифровку эфира. Система найдёт признаки и посчитает риск.' + (server ? "" : " Свой текст проверяется при запуске сервера (python -m app.server); здесь доступны готовые примеры.") + '</p>' +
+      '<label for="chk-text" class="muted" style="font-size:13px">Текст для проверки</label><textarea id="chk-text" placeholder="Например: вложи 5000, через неделю получишь 10 000, переводи на каспи"></textarea>' +
+      '<div class="actions"><button class="btn primary" id="chk-run"' + (server ? "" : " disabled") + '>Проверить</button><span class="muted" id="chk-msg" role="status"></span></div>' +
+      '<div><div class="muted" style="font-size:13px;margin-bottom:6px">Готовые примеры</div><div class="samples">' + D.samples.map(function (s, i) { return '<button data-sample="' + i + '">' + esc(s.label) + "</button>"; }).join("") + '</div></div></section>' +
+      '<section id="chk-out"><div class="panel empty">Выберите пример или вставьте свой текст.</div></section></div>';
+    document.querySelectorAll("[data-sample]").forEach(function (b) {
+      b.addEventListener("click", function () { var s = D.samples[+b.dataset.sample]; document.getElementById("chk-text").value = s.text; showCheck(s.result, s.text); });
+    });
+    var run = document.getElementById("chk-run");
+    run.addEventListener("click", function () {
+      var txt = document.getElementById("chk-text").value.trim(), msg = document.getElementById("chk-msg");
+      if (!txt) { msg.textContent = "Вставьте текст, чтобы проверить его"; return; }
+      msg.textContent = "Проверяю…";
+      fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: txt }) })
+        .then(function (r) { return r.json(); }).then(function (res) { msg.textContent = ""; showCheck(res, txt); })
+        .catch(function () { msg.textContent = "Сервер не отвечает. Запустите python -m app.server и обновите страницу."; });
+    });
+  }
+  function showCheck(r, text) {
+    var pos = r.signals.filter(function (s) { return s.points > 0; }), neg = r.signals.filter(function (s) { return s.points < 0; });
+    document.getElementById("chk-out").innerHTML = '<article class="panel card" style="position:static;max-height:none"><div class="card-head"><div class="big num ' + lvClass(r.level) + '">' + r.risk + "</div><div>" +
+      '<div class="headline"><span class="pill ' + lvClass(r.level) + '">' + LV[r.level] + ' риск</span><span class="chip">' + esc(r.track_name) + "</span></div>" + scaleHtml(r.risk, r.level) + "</div></div>" +
+      '<p class="sumtext">' + esc(r.summary) + "</p>" + combosHtml(r) +
+      (pos.length ? '<section class="signals"><h3>Почему</h3>' + pos.map(sigHtml).join("") + "</section>" : "") +
+      (neg.length ? '<section class="signals"><h3>Что снижает риск</h3>' + neg.map(sigHtml).join("") + "</section>" : "") +
+      (r.legal_hint ? '<div class="legal">' + esc(r.legal_hint) + "</div>" : "") + "</article>";
+  }
+
+  if (D) boot(D);
+  else fetch("/api/data").then(function (r) { return r.json(); }).then(boot).catch(function () { render(); });
+})();
+</script>
