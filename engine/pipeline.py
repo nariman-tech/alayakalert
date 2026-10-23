@@ -89,6 +89,22 @@ def analyze_text(text: str, model: TextModel | None = None) -> dict:
     return analyze_case(case, model=model)
 
 
+def analyze_input(text: str, model: TextModel | None = None, case_id: str = "uploaded") -> dict:
+    """Пост, чат или расшифровка эфира — определяется по тексту.
+
+    Три и больше строк разбираются как переписка или эфир (transcript.parse_transcript):
+    ставки, победители и приз вытаскиваются из текста. Возвращает результат + разобранный кейс + таймлайн.
+    """
+    from .transcript import parse_transcript
+    lines = [l for l in (text or "").splitlines() if l.strip()]
+    if len(lines) >= 3:
+        case = parse_transcript(text, case_id=case_id)
+        if case["type"] != "post":
+            res = analyze_case(case, model=model)
+            return {**res, "case": case, "timeline": timeline(case, model=model)}
+    return analyze_text(text, model=model)
+
+
 def timeline(case: dict, model: TextModel | None = None) -> list[dict]:
     """Риск после каждого сообщения. Сетевые признаки не используются — только то, что видно в эфире."""
     out, prev = [], set()
@@ -124,6 +140,25 @@ def analyze_corpus(cases: list[dict], model: TextModel | None = None, with_netwo
             owners[e].add(cid)
 
     extra: dict[str, dict[str, Hit]] = defaultdict(dict)
+
+    # История аккаунта: раньше бесплатные раздачи, позже платное участие
+    by_acc: dict[str, list] = defaultdict(list)
+    for c in cases:
+        if c.get("account") and c.get("date"):
+            by_acc[c["account"]].append(c)
+    paid_ids = {"T1_PAID", "T1_POT", "X_PAY_TO_GET", "T1_PRIZE_FEE"}
+    for acc, items in by_acc.items():
+        free = [c for c in items if "D_FREE" in {s["id"] for s in first[c["id"]]["signals"]}]
+        for c in items:
+            sigs = {s["id"] for s in first[c["id"]]["signals"]}
+            if not (sigs & paid_ids):
+                continue
+            earlier = sorted((f for f in free if f["date"] < c["date"]), key=lambda f: f["date"])
+            if earlier:
+                for f in earlier[-2:]:
+                    _add(extra[c["id"]], "T1_FUNNEL", f"{f['date']}: бесплатная раздача у этого же аккаунта")
+                _add(extra[c["id"]], "T1_FUNNEL", f"{c['date']}: теперь участие платное")
+
     if with_network:
         for e, cids in owners.items():
             if len(cids) < 2:

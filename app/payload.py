@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from engine.pipeline import analyze_text  # noqa: E402
+from engine.pipeline import analyze_input  # noqa: E402
 from engine.signals import CATALOG  # noqa: E402
 
 RESULTS = ROOT / "reports" / "results.json"
@@ -23,9 +23,33 @@ SAMPLES = [
     ("Эфир-аукцион", "Кто последний скинет на каспи — забирает весь банк! Банк уже 250 000. Это благотворительность, от души."),
     ("Банковский депозит", "Депозит «Накопительный»: 14,5% годовых, вклады гарантируются КФГД. Откройте онлайн в приложении."),
     ("Новость АФМ", "АФМ предупреждает: мошенники обещают «вложи 5000 — получи 10 000» и просят переводить на личную карту. Не ведитесь."),
+    ("Расшифровка эфира-аукциона", """[0:00] @host: Салем бәріне! Бүгінгі банк — 150 000 тг 🔥
+[0:15] @host: ставки кидаем на каспи +7 700 000 12 34, кто последний скинет — забирает весь банк
+[0:30] @host: один победитель выигрывает только один раз, дальше смотрит. это благотворительность
+[0:50] @aru25: +500
+[1:05] @dias83: кинул 1000
+[1:20] @host: ставка от @marat66 — 2 000 тг, банк растёт!
+[1:41] @helper_77: +3000
+[1:48] @host: Победитель раунда — @star_win! Забирает 150 000 тг
+[2:10] @asel38: +1000
+[2:25] @dana50: ставлю 2к
+[2:43] @helper_77: +3000
+[2:50] @host: Победитель — @star_win! Құттықтаймыз
+[3:10] @kamila80: +500
+[3:30] @helper_77: +2000
+[3:37] @host: Победитель раунда — @star_win, забирает 150 000 тг
+[4:00] @host: завтра снова в 20:00, банк будет больше!"""),
+    ("Благотворительный аукцион", """[0:00] @fund_shans: Благотворительный аукцион картин, все средства идут на счёт фонда «Шанс», реквизиты в описании
+[0:30] @fund_shans: картина уходит тому, кто предложит больше, оплата фонду после эфира
+[1:00] @aru25: предлагаю 25 000 за лот 1
+[1:40] @dias83: 30 000
+[2:20] @fund_shans: Лот 1 продан @dias83, спасибо за помощь фонду!
+[3:00] @asel38: за лот 2 даю 20 000
+[3:50] @fund_shans: Лот 2 продан @asel38. Рахмет!"""),
 ]
 
-CASE_KEYS = ("id", "type", "platform", "account", "title", "split", "label", "scheme_name", "track", "messages", "images", "rules")
+CASE_KEYS = ("id", "type", "platform", "account", "title", "split", "label", "scheme_name", "track", "messages", "images",
+             "rules", "date")
 
 
 def build_payload(mode: str = "static", model=None) -> dict:
@@ -36,7 +60,8 @@ def build_payload(mode: str = "static", model=None) -> dict:
     for c in cases:
         c["messages"] = [{k: m[k] for k in ("t", "author", "text") if k in m} for m in c["messages"]]
     catalog = {k: {"title": v.title, "points": v.points, "weight": v.weight} for k, v in CATALOG.items()}
-    samples = [{"label": label, "text": text, "result": analyze_text(text, model=model)} for label, text in SAMPLES]
+    samples = [{"label": label, "text": text,
+                "result": analyze_input(text, model=model, case_id=f"sample-{i}")} for i, (label, text) in enumerate(SAMPLES)]
     team_file = ROOT / "reports" / "team_history.json"
     team = json.loads(team_file.read_text(encoding="utf-8")) if team_file.exists() else {"rows": []}
     return {"mode": mode, "cases": cases, "results": data["results"], "graph": data["graph"],

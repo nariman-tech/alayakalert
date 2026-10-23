@@ -364,12 +364,13 @@ tr.ours td { font-weight: 600; }
     var fb = S.fb[id];
     var h = '<article class="panel card"><div class="card-head"><div class="big num ' + lvClass(r.level) + '">' + r.risk + '</div>' +
       '<div><div class="headline"><span class="pill ' + lvClass(r.level) + '">' + LV[r.level] + ' риск</span><span class="chip">' + esc(r.track_name) + "</span>" +
-      '<span class="chip">' + TYPE[c.type] + " · " + esc(c.platform) + '</span></div><div class="muted" style="margin-top:4px">' + esc(c.account) + " · " + esc(c.title) + " · " + c.id + "</div>" +
+      '<span class="chip">' + TYPE[c.type] + " · " + esc(c.platform) + '</span></div><div class="muted" style="margin-top:4px">' + esc(c.account) + " · " + esc(c.title) + (c.date ? " · " + esc(c.date) : "") + " · " + c.id + "</div>" +
       scaleHtml(r.risk, r.level) + "</div></div>" +
       '<p class="sumtext">' + esc(r.summary) + "</p>";
     h += combosHtml(r);
     if (pos.length) h += '<section class="signals" aria-label="Сработавшие признаки"><h3>Почему кейс помечен</h3>' + pos.map(sigHtml).join("") + "</section>";
     if (neg.length) h += '<section class="signals" aria-label="Снижающие факторы"><h3>Что снижает риск</h3>' + neg.map(sigHtml).join("") + "</section>";
+    h += historyHtml(c);
     if (c.type === "stream" && r.stream && r.stream.pot_series && r.stream.pot_series.length) h += '<section><h3>Рост банка во время эфира</h3>' + potChart(r.stream.pot_series, c, null) + streamStats(r.stream) + "</section>";
     if (c.messages.length > 1 || (c.images && c.images.length)) {
       h += '<section><h3>' + (c.type === "stream" ? "Расшифровка эфира" : "Переписка") + '</h3><div class="convo">' +
@@ -384,8 +385,22 @@ tr.ours td { font-weight: 600; }
     h += '<div class="actions"><button class="btn" data-fb="ok" aria-pressed="' + (fb === "ok") + '">Подтвердить нарушение</button>' +
       '<button class="btn" data-fb="fp" aria-pressed="' + (fb === "fp") + '">Ложное срабатывание</button>' +
       '<button class="btn" data-copy="1">Скопировать справку</button><span class="muted" id="copy-msg" role="status"></span></div>' +
-      '<div class="truth">Разметка датасета: ' + (c.label ? "подозрительный" : "честный") + " · схема «" + esc(c.scheme_name) + "» · " + (c.split === "test" ? "тестовая" : "обучающая") + " часть</div></article>";
+      '<div class="truth">' + (c.split === "upload" ? "Загружено вручную, разметки нет" :
+        "Разметка датасета: " + (c.label ? "подозрительный" : "честный") + " · схема «" + esc(c.scheme_name) + "» · " + (c.split === "test" ? "тестовая" : "обучающая") + " часть") + "</div></article>";
     return h;
+  }
+
+  function historyHtml(c) {
+    if (!c.account || c.split === "upload") return "";
+    var items = D.cases.filter(function (x) { return x.account === c.account; });
+    if (items.length < 2) return "";
+    items.sort(function (a, b) { return (a.date || "").localeCompare(b.date || ""); });
+    return '<section><h3>История аккаунта ' + esc(c.account) + "</h3>" + items.map(function (x) {
+      var rr = resById[x.id];
+      return '<div style="display:grid;grid-template-columns:auto 52px minmax(0,1fr);gap:12px;align-items:start;padding:6px 0;border-bottom:1px solid var(--line)">' +
+        '<span class="muted num" style="white-space:nowrap">' + esc((x.date || "").split("-").reverse().join(".")) + '</span><span class="pill num ' + lvClass(rr.level) + '">' + rr.risk + "</span>" +
+        "<span" + (x.id === c.id ? ' style="font-weight:600"' : "") + ">" + esc(x.messages[0].text) + "</span></div>";
+    }).join("") + "</section>";
   }
 
   function combosHtml(r) {
@@ -426,7 +441,8 @@ tr.ours td { font-weight: 600; }
     var g = "";
     var step = niceStep(top / 4);
     for (var v = 0; v <= top; v += step) g += '<line class="grid-line" x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(v) + '" y2="' + Y(v) + '"/><text x="' + (pl - 8) + '" y="' + (Y(v) + 4) + '" text-anchor="end">' + money(v) + "</text>";
-    for (var m = 0; m <= endT; m += niceStep(endT / 5)) g += '<text x="' + X(m) + '" y="' + (H - 8) + '" text-anchor="middle">' + Math.round(m / 60) + " мин</text>";
+    var stepT = endT >= 120 ? Math.max(60, Math.ceil(niceStep(endT / 5) / 60) * 60) : niceStep(endT / 5);
+    for (var m = 0; m <= endT; m += stepT) g += '<text x="' + X(m) + '" y="' + (H - 8) + '" text-anchor="middle">' + (endT >= 120 ? Math.round(m / 60) + " мин" : Math.round(m) + " с") + "</text>";
     if (prize) g += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(prize) + '" y2="' + Y(prize) + '" stroke="var(--accent)" stroke-dasharray="4 4"/><text x="' + (W - pr) + '" y="' + (Y(prize) - 6) + '" text-anchor="end" style="fill:var(--accent)">приз раунда ' + money(prize) + " тг</text>";
     if (pts.length) {
       var d = "M" + X(0) + "," + Y(0) + pts.map(function (p) { return " L" + X(p.t) + "," + Y(p.total); }).join("");
@@ -475,10 +491,13 @@ tr.ours td { font-weight: 600; }
   function liveCases() { return D.cases.filter(function (c) { return c.type !== "post" && D.timelines[c.id]; }); }
 
   function renderLive() {
-    var opts = liveCases().sort(function (a, b) { return b.label - a.label || (a.type === "stream" ? -1 : 1); });
+    var opts = liveCases().sort(function (a, b) {
+      var ua = a.split === "upload" ? 1 : 0, ub = b.split === "upload" ? 1 : 0;
+      return ub - ua || (b.label || 0) - (a.label || 0) || (a.type === "stream" ? -1 : 1);
+    });
     var c = byId[S.live.id];
     view.innerHTML = '<div class="controls"><select id="live-sel" aria-label="Кейс для воспроизведения">' + opts.map(function (o) {
-      return '<option value="' + o.id + '"' + (o.id === S.live.id ? " selected" : "") + ">" + (o.type === "stream" ? "Эфир" : "Чат") + " · " + esc(o.title) + " · " + esc(o.account) + (o.label ? "" : " (честный)") + "</option>";
+      return '<option value="' + o.id + '"' + (o.id === S.live.id ? " selected" : "") + ">" + (o.type === "stream" ? "Эфир" : "Чат") + " · " + esc(o.title) + " · " + esc(o.account) + (o.label === null ? " (загружен)" : o.label ? "" : " (честный)") + "</option>";
     }).join("") + '</select><button class="btn primary" id="live-play">' + (S.live.playing ? "Пауза" : (S.live.i >= 0 && S.live.i < c.messages.length - 1 ? "Продолжить" : "Запустить")) + '</button>' +
       '<button class="btn" id="live-reset">Сначала</button><select id="live-speed" aria-label="Скорость">' +
       [[1, "Скорость ×1"], [2, "×2"], [4, "×4"]].map(function (s) { return '<option value="' + s[0] + '"' + (S.live.speed === s[0] ? " selected" : "") + ">" + s[1] + "</option>"; }).join("") +
@@ -659,7 +678,7 @@ tr.ours td { font-weight: 600; }
   function renderCheck() {
     var server = D.mode === "server";
     view.innerHTML = '<div class="check"><section class="panel" style="padding:18px 20px;display:flex;flex-direction:column;gap:12px"><h2>Проверить текст</h2>' +
-      '<p class="fine" style="margin:0">Вставьте пост, сообщение из чата или расшифровку эфира. Система найдёт признаки и посчитает риск.' + (server ? "" : " Свой текст проверяется при запуске сервера (python -m app.server); здесь доступны готовые примеры.") + '</p>' +
+      '<p class="fine" style="margin:0">Вставьте пост, переписку из чата или расшифровку эфира. Для переписки и эфира — каждое сообщение с новой строки, можно со временем и ником: «[1:20] @ник: текст». Система сама найдёт ставки, победителей и приз.' + (server ? "" : " Свой текст проверяется при запуске сервера (python -m app.server); здесь доступны готовые примеры.") + '</p>' +
       '<label for="chk-text" class="muted" style="font-size:13px">Текст для проверки</label><textarea id="chk-text" placeholder="Например: вложи 5000, через неделю получишь 10 000, переводи на каспи"></textarea>' +
       '<div class="actions"><button class="btn primary" id="chk-run"' + (server ? "" : " disabled") + '>Проверить</button><span class="muted" id="chk-msg" role="status"></span></div>' +
       '<div><div class="muted" style="font-size:13px;margin-bottom:6px">Готовые примеры</div><div class="samples">' + D.samples.map(function (s, i) { return '<button data-sample="' + i + '">' + esc(s.label) + "</button>"; }).join("") + '</div></div></section>' +
@@ -679,12 +698,34 @@ tr.ours td { font-weight: 600; }
   }
   function showCheck(r, text) {
     var pos = r.signals.filter(function (s) { return s.points > 0; }), neg = r.signals.filter(function (s) { return s.points < 0; });
+    var c = r.case, parsed = "";
+    if (c && c.type !== "post") {
+      var p = c.parsed || {};
+      parsed = '<section><h3>Что система нашла в тексте</h3><div class="kpis" style="margin-top:8px">' +
+        '<div class="kpi"><b class="num">' + c.messages.length + '</b><span>сообщений</span></div>' +
+        '<div class="kpi"><b class="num">' + (p.bids || 0) + '</b><span>ставок</span></div>' +
+        '<div class="kpi"><b class="num">' + (p.winners || 0) + '</b><span>объявлений победителя</span></div>' +
+        (c.rules && c.rules.start_prize ? '<div class="kpi"><b class="num">' + money(c.rules.start_prize) + '</b><span>тг объявленный приз</span></div>' : "") + "</div>" +
+        (c.rules && c.rules.one_win_per_user ? '<p class="fine">Найдено правило: «победитель выигрывает только один раз».</p>' : "") + "</section>";
+      if (r.stream && r.stream.pot_series && r.stream.pot_series.length) parsed += "<section><h3>Рост банка</h3>" + potChart(r.stream.pot_series, c, null) + streamStats(r.stream) + "</section>";
+      parsed += '<div class="actions"><button class="btn primary" id="chk-live">Смотреть в живом эфире</button></div>';
+    }
     document.getElementById("chk-out").innerHTML = '<article class="panel card" style="position:static;max-height:none"><div class="card-head"><div class="big num ' + lvClass(r.level) + '">' + r.risk + "</div><div>" +
-      '<div class="headline"><span class="pill ' + lvClass(r.level) + '">' + LV[r.level] + ' риск</span><span class="chip">' + esc(r.track_name) + "</span></div>" + scaleHtml(r.risk, r.level) + "</div></div>" +
+      '<div class="headline"><span class="pill ' + lvClass(r.level) + '">' + LV[r.level] + ' риск</span><span class="chip">' + esc(r.track_name) + "</span>" +
+      (c && c.type !== "post" ? '<span class="chip">' + (c.type === "stream" ? "эфир" : "переписка") + "</span>" : "") + "</div>" + scaleHtml(r.risk, r.level) + "</div></div>" +
       '<p class="sumtext">' + esc(r.summary) + "</p>" + combosHtml(r) +
       (pos.length ? '<section class="signals"><h3>Почему</h3>' + pos.map(sigHtml).join("") + "</section>" : "") +
       (neg.length ? '<section class="signals"><h3>Что снижает риск</h3>' + neg.map(sigHtml).join("") + "</section>" : "") +
-      (r.legal_hint ? '<div class="legal">' + esc(r.legal_hint) + "</div>" : "") + "</article>";
+      parsed + (r.legal_hint ? '<div class="legal">' + esc(r.legal_hint) + "</div>" : "") + "</article>";
+    var live = document.getElementById("chk-live");
+    if (live) live.addEventListener("click", function () {
+      c.platform = c.platform || "Эфир"; c.split = "upload"; c.label = null; c.scheme_name = "загружено вручную";
+      if (!byId[c.id]) { D.cases.push(c); D.results.push(r); }
+      byId[c.id] = c; resById[c.id] = r; D.timelines[c.id] = r.timeline;
+      S.live.id = c.id; S.live.i = -1; S.view = "live";
+      try { history.replaceState(null, "", "#live"); } catch (e) {}
+      render();
+    });
   }
 
   if (D) boot(D);

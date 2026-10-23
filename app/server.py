@@ -26,7 +26,7 @@ except ImportError:  # pragma: no cover
 
 from app.payload import build_payload, render_page  # noqa: E402
 from engine.ml import TextModel  # noqa: E402
-from engine.pipeline import analyze_text  # noqa: E402
+from engine.pipeline import analyze_input  # noqa: E402
 
 DATA = ROOT / "data" / "cases.jsonl"
 FEEDBACK = ROOT / "reports" / "feedback.jsonl"
@@ -37,6 +37,7 @@ PAYLOAD = build_payload("server", model=MODEL)
 PAGE = render_page(PAYLOAD, full_document=True)
 
 app = Flask(__name__)
+UPLOADS = 0
 
 
 @app.get("/")
@@ -55,7 +56,9 @@ def analyze():
     text = str(body.get("text", ""))[:20000]
     if not text.strip():
         return jsonify({"error": "Пустой текст"}), 400
-    return jsonify(analyze_text(text, model=MODEL))
+    global UPLOADS
+    UPLOADS += 1
+    return jsonify(analyze_input(text, model=MODEL, case_id=f"uploaded-{UPLOADS}"))
 
 
 @app.post("/api/feedback")

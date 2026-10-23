@@ -371,6 +371,7 @@ SCHEME_NAMES = {
     "legend_project": "Псевдобизнес с легендой", "referral_mlm": "Реферальная сеть", "kassa": "«Касса айналымы»",
     "bank": "Банковский продукт", "news_pyramid": "Новость / предупреждение", "charity": "Благотворительный сбор",
     "family_chat": "Родительский чат: сбор на подарок", "edu_chat": "Чат обучения инвестициям",
+    "funnel_free": "Бесплатная раздача (до перехода на платные)", "funnel_paid": "Переход на платные розыгрыши",
 }
 
 _counter = 0
@@ -637,7 +638,46 @@ def build() -> list[dict]:
         cases += [family_chat(style) for _ in range(nf)]
         cases += [edu_chat(style) for _ in range(ne)]
     R.shuffle(cases)
+    # даты публикаций — отдельный генератор, чтобы не менять сами кейсы
+    rd = random.Random(5)
+    for c in cases:
+        c["date"] = f"2026-{rd.choice(['09', '10'])}-{rd.randint(1, 20):02d}"
+    cases += funnel_accounts()
     return cases
+
+
+FUNNEL = [
+    ("@aruzhan_gifts_7", [
+        ("2026-09-03", "funnel_free", "🎁 Дарю AirPods просто так! Подпишись и отметь подругу, участие бесплатное, итоги через рандомайзер"),
+        ("2026-09-12", "funnel_free", "Снова раздача 🎁 сертификат на 20 000 тг, ничего платить не нужно, просто подпишись"),
+        ("2026-10-05", "funnel_paid", "Девочки, теперь разыгрываем iPhone 17! Участие — 2 000 тг на каспи +7 700 000 41 18, номерок пришлю в директ. Крутим колесо в субботу"),
+    ]),
+    ("@dias_bonus_kz", [
+        ("2026-09-06", "funnel_free", "Бесплатный розыгрыш 10 000 тг среди подписчиков! Лайк и репост, всё бесплатно"),
+        ("2026-10-02", "funnel_paid", "Розыгрыш 1 000 000 тг 💸 для участия купи мой гайд за 9 990 тг, победителя выберет барабан в эфире"),
+    ]),
+    ("@saule_lucky_22", [
+        ("2026-09-09", "funnel_free", "Тегін ұтыс! Наушники сыйлаймыз, парақшаға жазылыңыз, ештеңе төлеудің қажеті жоқ"),
+        ("2026-09-20", "funnel_free", "Сегодня снова бесплатная раздача: три подарка подписчикам, рандомайзер в 20:00"),
+        ("2026-10-11", "funnel_paid", "Эфир сегодня в 20:00! Кто последний скинет на каспи — забирает весь банк 🔥 банк уже 100 000"),
+    ]),
+    ("@marat_prizes_9", [
+        ("2026-09-14", "funnel_free", "Розыгрыш PlayStation 5 бесплатно, условия: подписка и комментарий"),
+        ("2026-10-08", "funnel_paid", "Лотерея на PlayStation 5: билеты по 1 000 тг, всего 300 билетов, оплата на карту 4400 43** **** 2291, итоги барабаном"),
+    ]),
+]
+
+
+def funnel_accounts() -> list[dict]:
+    out = []
+    for acc, posts in FUNNEL:
+        for date, scheme, text in posts:
+            label = 1 if scheme == "funnel_paid" else 0
+            out.append({"id": new_id(1, "post"), "track": 1, "label": label, "scheme": scheme,
+                        "scheme_name": SCHEME_NAMES[scheme], "type": "post", "platform": "Instagram", "account": acc,
+                        "title": "Публикация в Instagram", "split": "train", "date": date,
+                        "messages": [{"t": 0, "author": acc, "text": text}], "images": []})
+    return out
 
 
 def main():
