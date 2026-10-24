@@ -148,9 +148,11 @@ def analyze_chat(case: dict, model: TextModel | None = None, window: int = 40, s
         start, end = best[1], min(n, best[1] + window)
     sub = _sub_case(case, start, end)
     res = analyze_case(sub, model=model)
+    seen = set()
     for s in res["signals"]:
         for e in s["evidence"]:
-            if e.get("msg", -1) >= 0:
+            if id(e) not in seen and e.get("msg", -1) >= 0:
+                seen.add(id(e))
                 e["msg"] += start
     tl = timeline(sub, model=model)
     for p in tl:

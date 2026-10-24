@@ -218,6 +218,7 @@ tr.ours td { font-weight: 600; }
 <main><div class="wrap" id="view"><div class="empty">Загружаю данные…</div></div></main>
 
 <script id="sn-data" type="application/json">/*__DATA__*/null</script>
+<script>/*__ENGINE__*/</script>
 <script>
 (function () {
   "use strict";
@@ -684,71 +685,74 @@ tr.ours td { font-weight: 600; }
   }
 
   /* ── Проверка текста ───────────────────────────────────── */
+  var UPLOADS = 0;
   function renderCheck() {
-    var server = D.mode === "server";
+    var server = D.mode === "server", local = !server && !!window.AlayakEngine;
     view.innerHTML = '<div class="check"><section class="panel" style="padding:18px 20px;display:flex;flex-direction:column;gap:12px"><h2>Проверить текст или чат</h2>' +
-      '<p class="fine" style="margin:0">Вставьте пост, переписку из чата или расшифровку эфира. Для переписки и эфира — каждое сообщение с новой строки, можно со временем и ником: «[1:20] @ник: текст». Система сама найдёт ставки, победителей и приз.' + (server ? "" : " Проверка правилами своего текста работает при запуске сервера на ноутбуке (python -m app.server). Здесь свой текст может прочитать ИИ — кнопка «Спросить ИИ».") + '</p>' +
+      '<p class="fine" style="margin:0">Вставьте пост, переписку из чата или расшифровку эфира. Для переписки и эфира — каждое сообщение с новой строки, можно со временем и ником: «[1:20] @ник: текст». Система сама найдёт ставки, победителей и приз.' +
+      (local ? " Проверка идёт прямо в браузере: текст никуда не отправляется." : "") + '</p>' +
       '<label for="chk-text" class="muted" style="font-size:13px">Текст для проверки</label><textarea id="chk-text" placeholder="Например: вложи 5000, через неделю получишь 10 000, переводи на каспи"></textarea>' +
-      '<div class="actions"><button class="btn' + (server ? " primary" : "") + '" id="chk-run"' + (server ? "" : " disabled") + '>Проверить правилами</button>' + (server ? "" : '<button class="btn primary" id="chk-ai" disabled>Спросить ИИ</button>') + '<span class="muted" id="chk-msg" role="status"></span></div>' +
+      '<div class="actions"><button class="btn primary" id="chk-run">Проверить</button><span class="muted" id="chk-msg" role="status"></span></div>' +
       '<div style="border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px"><h3>Выгрузка чата</h3>' +
-      '<p class="fine" style="margin:0">Telegram Desktop: «Экспорт истории чата» → формат JSON → файл result.json. WhatsApp: «Экспорт чата» → «Без медиафайлов» → файл .txt.' + (server ? "" : " Правилами свой файл разбирается при запуске сервера; здесь его может прочитать ИИ. Ниже есть готовые примеры выгрузок.") + '</p>' +
-      '<label for="chk-file" class="muted" style="font-size:13px">Файл выгрузки</label><input type="file" id="chk-file" accept=".json,.txt"' + (server ? "" : " disabled") + '>' +
-      '<div class="actions"><button class="btn primary" id="chk-upload"' + (server ? "" : " disabled") + '>' + (server ? "Разобрать выгрузку" : "Разобрать с ИИ") + '</button><span class="muted" id="chk-up-msg" role="status"></span></div></div>' +
+      '<p class="fine" style="margin:0">Telegram Desktop: «Экспорт истории чата» → формат JSON → файл result.json. WhatsApp: «Экспорт чата» → «Без медиафайлов» → файл .txt.' +
+      (local ? " Файл разбирается в браузере и никуда не сохраняется." : "") + '</p>' +
+      '<label for="chk-file" class="muted" style="font-size:13px">Файл выгрузки</label><input type="file" id="chk-file" accept=".json,.txt">' +
+      '<div class="actions"><button class="btn primary" id="chk-upload">Разобрать выгрузку</button><span class="muted" id="chk-up-msg" role="status"></span></div></div>' +
       '<div><div class="muted" style="font-size:13px;margin-bottom:6px">Готовые примеры</div><div class="samples">' + D.samples.map(function (s, i) { return '<button data-sample="' + i + '">' + esc(s.label) + "</button>"; }).join("") + '</div></div></section>' +
       '<section id="chk-out"><div class="panel empty" style="text-align:left"><h3 style="margin-top:0">Как проверить</h3><ol style="margin:8px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px">' +
-      "<li>Вставьте пост, переписку или расшифровку эфира в поле слева.</li><li>Или загрузите выгрузку чата из Telegram или WhatsApp.</li><li>Или нажмите любой готовый пример — увидите, как система объясняет риск.</li></ol>" +
-      '<p class="fine" style="margin-bottom:0">Система не обвиняет: она показывает признаки схемы и цитаты, а решает человек.</p></div></section></div>';
+      "<li>Вставьте пост, переписку или расшифровку эфира в поле слева и нажмите «Проверить».</li><li>Или загрузите выгрузку чата из Telegram или WhatsApp.</li><li>Или нажмите любой готовый пример — увидите, как система объясняет риск.</li></ol>" +
+      '<p class="fine" style="margin-bottom:0">Система не обвиняет: она показывает признаки схемы и цитаты, а решает человек. Под результатом можно спросить второе мнение ИИ.</p></div></section></div>';
     document.querySelectorAll("[data-sample]").forEach(function (b) {
       b.addEventListener("click", function () { var s = D.samples[+b.dataset.sample]; document.getElementById("chk-text").value = s.text; showCheck(s.result, s.chat_text || s.text); });
     });
-    var up = document.getElementById("chk-upload");
-    up.addEventListener("click", function () {
+    document.getElementById("chk-upload").addEventListener("click", function () {
       var f = document.getElementById("chk-file").files[0], msg = document.getElementById("chk-up-msg");
       if (!f) { msg.textContent = "Выберите файл выгрузки"; return; }
-      if (!server) { aiFile(f, msg); return; }
+      if (!server) { localFile(f, msg); return; }
       var fd = new FormData(); fd.append("file", f);
       msg.textContent = "Разбираю " + f.name + "…";
       fetch("/api/upload", { method: "POST", body: fd }).then(function (r) { return r.json(); }).then(function (res) {
         if (res.error) { msg.textContent = res.error; return; }
         msg.textContent = res.chats.length > 1 ? "Чатов в файле: " + res.chats.length + ", показан самый опасный" : "";
-        window.__chats = res.chats;
         showCheck(res.chats[0], "");
       }).catch(function () { msg.textContent = "Сервер не отвечает. Запустите python -m app.server и обновите страницу."; });
     });
-    var run = document.getElementById("chk-run");
-    run.addEventListener("click", function () {
+    document.getElementById("chk-run").addEventListener("click", function () {
       var txt = document.getElementById("chk-text").value.trim(), msg = document.getElementById("chk-msg");
       if (!txt) { msg.textContent = "Вставьте текст, чтобы проверить его"; return; }
       msg.textContent = "Проверяю…";
+      if (!server) {
+        if (!window.AlayakEngine) { msg.textContent = "Движок проверки не загрузился. Обновите страницу."; return; }
+        setTimeout(function () {
+          try { var res = window.AlayakEngine.analyzeInput(txt, "uploaded-" + (++UPLOADS)); msg.textContent = ""; showCheck(res, txt); }
+          catch (e) { msg.textContent = "Не удалось проверить текст: " + (e && e.message || e); }
+        }, 20);
+        return;
+      }
       fetch("/api/analyze", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: txt }) })
         .then(function (r) { return r.json(); }).then(function (res) { msg.textContent = ""; showCheck(res, txt); })
         .catch(function () { msg.textContent = "Сервер не отвечает. Запустите python -m app.server и обновите страницу."; });
     });
-    var askAI = document.getElementById("chk-ai");
-    if (askAI) askAI.addEventListener("click", function () {
-      var txt = document.getElementById("chk-text").value.trim(), msg = document.getElementById("chk-msg");
-      if (!txt) { msg.textContent = "Вставьте текст, чтобы ИИ его прочитал"; return; }
-      msg.textContent = "";
-      var lines = txt.split("\n").filter(function (x) { return x.trim(); }).length;
-      aiOnly("chk:" + hashStr(txt), { kind: lines >= 3 ? "chat" : "post", text: clip(txt, 60000).text, cut: txt.length > 60000, level: null },
-        "Свой текст: правилами он проверяется при запуске сервера, здесь — только второе мнение ИИ.");
-    });
   }
-  function aiOnly(key, src, note) {
-    document.getElementById("chk-out").innerHTML = '<article class="panel card" style="position:static;max-height:none"><p class="fine" style="margin:0">' + esc(note) + "</p>" + aiSlot(key, src) + "</article>";
-    if (AI.res[key] && AI.res[key].status !== "err") aiRefresh(); else aiRun(key);
-  }
-  function aiFile(f, msg) {
+  function localFile(f, msg) {
+    if (!window.AlayakEngine) { msg.textContent = "Движок проверки не загрузился. Обновите страницу."; return; }
     if (f.size > 20 * 1024 * 1024) { msg.textContent = "Файл больше 20 МБ"; return; }
+    msg.textContent = "Разбираю " + f.name + "…";
     var rd = new FileReader();
     rd.onload = function () {
-      var ch;
-      try { ch = parseExportJS(f.name, String(rd.result)); } catch (e) { msg.textContent = "Не удалось прочитать файл. Нужен экспорт Telegram в JSON или экспорт WhatsApp в .txt"; return; }
-      if (!ch.messages.length) { msg.textContent = "В файле не найдено сообщений"; return; }
-      msg.textContent = "Сообщений в выгрузке: " + ch.messages.length;
-      var txt = ch.messages.map(function (m, i) { return (i + 1) + ". " + m.author + ": " + m.text; }).join("\n"), cl = clip(txt, 60000);
-      aiOnly("file:" + hashStr(txt), { kind: "chat", text: cl.text, cut: cl.cut, level: null },
-        "«" + ch.title + "»: " + ch.messages.length + " сообщений. Файл разобран в браузере и никуда не сохраняется; правилами он проверяется при запуске сервера, здесь — второе мнение ИИ.");
+      setTimeout(function () {
+        var cases;
+        try { cases = window.AlayakEngine.loadExport(f.name, String(rd.result)); }
+        catch (e) { msg.textContent = "Не удалось прочитать файл. Нужен экспорт Telegram в формате JSON или экспорт WhatsApp в .txt"; return; }
+        if (!cases.length) { msg.textContent = "В файле не найдено сообщений"; return; }
+        var out = cases.map(function (c) {
+          c.id = "chat-" + (++UPLOADS);
+          var txt = c.messages.map(function (m, i) { return (i + 1) + ". " + m.author + ": " + m.text; }).join("\n");
+          return { r: window.AlayakEngine.analyzeChat(c), text: txt };
+        }).sort(function (a, b) { return b.r.risk - a.r.risk; });
+        msg.textContent = out.length > 1 ? "Чатов в файле: " + out.length + ", показан самый опасный" : "";
+        showCheck(out[0].r, out[0].text);
+      }, 20);
     };
     rd.onerror = function () { msg.textContent = "Не удалось прочитать файл"; };
     rd.readAsText(f, "utf-8");
@@ -850,9 +854,6 @@ tr.ours td { font-weight: 600; }
   function aiRefresh() {
     document.querySelectorAll("[data-ai]").forEach(aiPaint);
     if (document.getElementById("ai-sets")) paintSets();
-    var b = document.getElementById("chk-ai"); if (b) b.disabled = AI.state !== "on";
-    var f = document.getElementById("chk-file"), u = document.getElementById("chk-upload");
-    if (D && D.mode !== "server" && f && u) { f.disabled = u.disabled = AI.state !== "on"; }
   }
   function repaint(key) { document.querySelectorAll("[data-ai]").forEach(function (el) { if (el.dataset.ai === key) aiPaint(el); }); }
   function aiPaint(el) {
@@ -924,33 +925,6 @@ tr.ours td { font-weight: 600; }
       else AI.res[key] = { status: "err", err: aiErr(e) };
       repaint(key);
     });
-  }
-
-  // Разбор выгрузки прямо в браузере (для ИИ в онлайн-версии; на сервере выгрузку разбирает движок)
-  function parseExportJS(name, raw) {
-    var msgs = [], title = name;
-    if (/\.json$/i.test(name) || /^\s*\{/.test(raw)) {
-      var data = JSON.parse(raw);
-      var chats = data.chats && data.chats.list ? data.chats.list : [data];
-      chats.sort(function (a, b) { return ((b.messages || []).length) - ((a.messages || []).length); });
-      var ch = chats[0] || {}; title = ch.name || name;
-      (ch.messages || []).forEach(function (m) {
-        if (m.type !== "message") return;
-        var t = Array.isArray(m.text) ? m.text.map(function (x) { return typeof x === "string" ? x : (x && x.text) || ""; }).join("") : String(m.text || "");
-        if (m.photo) t = (t ? t + " " : "") + "[фото]";
-        if (t.trim()) msgs.push({ author: m.from || "", text: t.trim() });
-      });
-    } else {
-      var re = /^\[?(\d{1,2}[.\/]\d{1,2}[.\/]\d{2,4}),?\s+(\d{1,2}:\d{2}(?::\d{2})?(?:\s?[AaPp]\.?\s?[Mm]\.?)?)\]?\s*(?:[-–]\s*)?([^:]{1,60}?):\s(.*)$/;
-      var start = /^\[?\d{1,2}[.\/]\d{1,2}[.\/]\d{2,4},?\s+\d{1,2}:\d{2}/, last = null;
-      raw.replace(/\r/g, "").replace(/[‎‏]/g, "").split("\n").forEach(function (line) {
-        var m = line.match(re);
-        if (m) { last = { author: m[3].trim(), text: m[4].replace(/<[^>]*(медиа|Media)[^>]*>/i, "[медиафайл]").trim() }; msgs.push(last); }
-        else if (start.test(line)) last = null;
-        else if (last && line.trim()) last.text += "\n" + line.trim();
-      });
-    }
-    return { title: title, messages: msgs };
   }
 
   // Наборы команды: правила (замер на текущей версии) против ИИ, один запрос на весь набор

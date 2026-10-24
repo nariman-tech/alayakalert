@@ -3,7 +3,7 @@
     python -m app.build   ->  dist/alayakalert.html
 
 * Шрифты подгружаются из Google Fonts; без интернета браузер подставит системный шрифт.
-Режим «проверить свой текст» в офлайн-сборке работает только на готовых примерах.
+Свой текст и выгрузки чатов проверяются в браузере (app/static/engine.js). Копия кладётся в index.html для GitHub Pages.
 """
 from __future__ import annotations
 
@@ -23,6 +23,7 @@ def main():
     out = dist / "alayakalert.html"
     out.write_text(render_page(payload, full_document=True), encoding="utf-8")
     (dist / "artifact.html").write_text(render_page(payload, full_document=False), encoding="utf-8")
+    (ROOT / "index.html").write_text(out.read_text(encoding="utf-8"), encoding="utf-8")  # для GitHub Pages
     print(f"Готово: {out} ({out.stat().st_size // 1024} КБ)")
 
 

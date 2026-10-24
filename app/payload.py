@@ -119,6 +119,8 @@ def render_page(payload: dict, full_document: bool = True) -> str:
     fragment = TEMPLATE.read_text(encoding="utf-8")
     blob = json.dumps(payload, ensure_ascii=False).replace("</", "<\\/")
     fragment = fragment.replace("/*__DATA__*/null", blob)
+    from app.export_engine import engine_script
+    fragment = fragment.replace("<script>/*__ENGINE__*/</script>", "<script>\n" + engine_script() + "\n</script>")
     if not full_document:
         return fragment
     return ("<!doctype html>\n<html lang=\"ru\">\n<head>\n<meta charset=\"utf-8\">\n"
