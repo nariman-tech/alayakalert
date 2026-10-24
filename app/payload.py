@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from engine.importers import load_export  # noqa: E402
-from engine.pipeline import analyze_chat, analyze_input  # noqa: E402
+from engine.pipeline import analyze_chat, analyze_input, analyze_text  # noqa: E402
 from engine.signals import CATALOG  # noqa: E402
 
 RESULTS = ROOT / "reports" / "results.json"
@@ -78,14 +78,41 @@ def build_payload(mode: str = "static", model=None) -> dict:
         if cases_f:
             cases_f[0]["id"] = "file-" + fname.split(".")[0]
             res = analyze_chat(cases_f[0], model=model)
-            samples.append({"label": label, "file": True,
+            chat_text = "\n".join(f"{j + 1}. {m.get('author', '')}: {m.get('text', '')}" for j, m in enumerate(cases_f[0]["messages"]))
+            samples.append({"label": label, "file": True, "chat_text": chat_text,
                             "text": f"Файл выгрузки: {fname} — {res['chat']['messages']} сообщений. "
                                     "Свой файл можно загрузить при запуске сервера.", "result": res})
     team_file = ROOT / "reports" / "team_history.json"
     team = json.loads(team_file.read_text(encoding="utf-8")) if team_file.exists() else {"rows": []}
-    return {"mode": mode, "cases": cases, "results": data["results"], "graph": data["graph"],
+    return {"mode": mode, "ai_sets": ai_sets(), "cases": cases, "results": data["results"], "graph": data["graph"],
             "timelines": data["timelines"], "metrics": data["metrics"], "catalog": catalog, "samples": samples,
             "team": team}
+
+
+AI_SETS = [
+    ("set4", "Набор 4 (слепой, писала команда)", "team_test4.tsv"),
+    ("probe", "Провокационные честные тексты", "probe_negatives.tsv"),
+]
+
+
+def ai_sets() -> list[dict]:
+    """Наборы команды для проверки второго мнения ИИ: текст, разметка команды и оценка правил (замер на текущей версии)."""
+    import csv
+    out = []
+    for key, name, fname in AI_SETS:
+        path = ROOT / "data" / "team" / fname
+        if not path.exists():
+            continue
+        rows = list(csv.reader(path.open(encoding="utf-8"), delimiter="\t"))[1:]
+        items = []
+        for r in rows:
+            if not r or not r[0].strip():
+                continue
+            res = analyze_text(r[0])
+            items.append({"text": r[0], "label": r[1].strip().lower().startswith("д"), "track": r[2] if len(r) > 2 else "",
+                          "engine_level": res["level"], "engine_risk": res["risk"]})
+        out.append({"key": key, "name": name, "rows": items})
+    return out
 
 
 def render_page(payload: dict, full_document: bool = True) -> str:
