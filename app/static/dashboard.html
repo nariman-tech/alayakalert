@@ -1,4 +1,4 @@
-<title>SafeNet KZ</title>
+<title>AlayakAlert</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -204,14 +204,14 @@ tr.ours td { font-weight: 600; }
 
 <header class="top">
   <div class="wrap">
-    <div class="brand"><h1>SafeNet KZ</h1><span>Рабочее место аналитика</span></div>
+    <div class="brand"><h1>AlayakAlert</h1><span>Рабочее место аналитика · признаки мошеннических схем</span></div>
     <div class="datanote">Синтетические данные · все аккаунты вымышлены</div>
     <nav class="tabs" role="tablist" aria-label="Разделы">
+      <button role="tab" data-view="check">Проверить текст или чат</button>
       <button role="tab" data-view="queue">Очередь кейсов</button>
       <button role="tab" data-view="live">Живой эфир</button>
       <button role="tab" data-view="network">Сеть связей</button>
       <button role="tab" data-view="metrics">Метрики</button>
-      <button role="tab" data-view="check">Проверить текст</button>
     </nav>
   </div>
 </header>
@@ -223,14 +223,14 @@ tr.ours td { font-weight: 600; }
   "use strict";
   var D = null;
   try { D = JSON.parse(document.getElementById("sn-data").textContent.replace("/*__DATA__*/", "")); } catch (e) { D = null; }
-  var VIEWS = ["queue", "live", "network", "metrics", "check"];
+  var VIEWS = ["check", "queue", "live", "network", "metrics"];
   var LV = { high: "Высокий", medium: "Средний", low: "Низкий" };
   var TYPE = { post: "пост", chat: "чат", stream: "эфир" };
-  var TRACK = { 0: "Не определён", 1: "Розыгрыши", 2: "Казино", 3: "Пирамиды" };
+  var TRACK = { 0: "Вид не определён", 1: "Незаконный розыгрыш", 2: "Реклама казино", 3: "Финансовая пирамида" };
   var ENT = { phone: "Телефон", card: "Карта", promo: "Промокод", domain: "Домен", tg: "Telegram", image: "Скриншот", winner: "Победитель" };
-  var S = { view: "queue", track: "all", level: "all", split: "all", q: "", sel: null, cluster: 0, node: null,
+  var S = { view: "check", track: "all", level: "all", split: "all", q: "", sel: null, cluster: 0, node: null,
             live: { id: null, i: -1, playing: false, timer: null, speed: 1 }, fb: {} };
-  try { S.fb = JSON.parse(localStorage.getItem("safenet-feedback") || "{}"); } catch (e) { S.fb = {}; }
+  try { S.fb = JSON.parse(localStorage.getItem("alayakalert-feedback") || "{}"); } catch (e) { S.fb = {}; }
 
   var byId = {}, resById = {}, view = document.getElementById("view");
 
@@ -303,11 +303,11 @@ tr.ours td { font-weight: 600; }
       '<div class="item"><span class="pill lv-medium"><span class="num">' + cnt.medium + '</span> средний</span></div>' +
       '<div class="item"><span class="pill lv-low"><span class="num">' + cnt.low + '</span> низкий</span></div></div>' +
       '<div class="desk"><section aria-label="Список кейсов"><div class="filters">' +
-      sel("f-track", S.track, [["all", "Все треки"], ["1", "Трек 1 · Розыгрыши"], ["2", "Трек 2 · Казино"], ["3", "Трек 3 · Пирамиды"], ["0", "Не определён"]]) +
+      sel("f-track", S.track, [["all", "Все виды схем"], ["1", "Незаконные розыгрыши"], ["2", "Реклама казино"], ["3", "Финансовые пирамиды"], ["0", "Вид не определён"]]) +
       sel("f-level", S.level, [["all", "Любой риск"], ["high", "Высокий"], ["medium", "Средний"], ["low", "Низкий"]]) +
       sel("f-split", S.split, [["all", "Вся выборка"], ["test", "Только тест"], ["train", "Только обучение"]]) +
       '<input id="f-q" type="search" placeholder="Поиск по тексту, нику, номеру" value="' + esc(S.q) + '" aria-label="Поиск"></div>' +
-      '<div class="panel list" id="list">' + (list.length ? list.map(rowHtml).join("") : '<div class="empty">Под фильтр ничего не попало. Сбросьте трек или уровень риска.</div>') + '</div></section>' +
+      '<div class="panel list" id="list">' + (list.length ? list.map(rowHtml).join("") : '<div class="empty">Под фильтр ничего не попало. Сбросьте вид схемы или уровень риска.</div>') + '</div></section>' +
       '<section id="pane" aria-label="Карточка кейса">' + (S.sel ? cardHtml(S.sel) : '<div class="panel empty">Выберите кейс слева.</div>') + '</section></div>';
     bindSel("f-track", "track"); bindSel("f-level", "level"); bindSel("f-split", "split");
     var qi = document.getElementById("f-q");
@@ -317,7 +317,7 @@ tr.ours td { font-weight: 600; }
 
   function refreshList() {
     var list = filtered();
-    document.getElementById("list").innerHTML = list.length ? list.map(rowHtml).join("") : '<div class="empty">Под фильтр ничего не попало. Сбросьте трек или уровень риска.</div>';
+    document.getElementById("list").innerHTML = list.length ? list.map(rowHtml).join("") : '<div class="empty">Под фильтр ничего не попало. Сбросьте вид схемы или уровень риска.</div>';
     bindRows();
   }
 
@@ -470,7 +470,7 @@ tr.ours td { font-weight: 600; }
       b.addEventListener("click", function () {
         var v = b.dataset.fb;
         if (S.fb[S.sel] === v) delete S.fb[S.sel]; else S.fb[S.sel] = v;
-        try { localStorage.setItem("safenet-feedback", JSON.stringify(S.fb)); } catch (e) {}
+        try { localStorage.setItem("alayakalert-feedback", JSON.stringify(S.fb)); } catch (e) {}
         if (D.mode === "server") { try { fetch("/api/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: S.sel, verdict: S.fb[S.sel] || null }) }).catch(function () {}); } catch (e) {} }
         document.getElementById("pane").innerHTML = cardHtml(S.sel); bindCard(); refreshList();
       });
@@ -485,7 +485,7 @@ tr.ours td { font-weight: 600; }
 
   function reportText(id) {
     var r = resById[id], c = byId[id];
-    var L = ["Справка SafeNet KZ по кейсу " + id, "Источник: " + c.platform + ", " + c.account + " (" + TYPE[c.type] + ")",
+    var L = ["Справка AlayakAlert по кейсу " + id, "Источник: " + c.platform + ", " + c.account + " (" + TYPE[c.type] + ")",
       "Уровень риска: " + LV[r.level] + " (" + r.risk + " из 100), " + r.track_name, "", r.summary, ""];
     r.signals.filter(function (s) { return s.points > 0; }).forEach(function (s) {
       L.push("• " + s.title + (s.note ? " — " + s.note : "") + " (+" + s.points + ")");
@@ -596,7 +596,7 @@ tr.ours td { font-weight: 600; }
       var nodes = g.nodes.filter(function (n) { return n.cluster === k.id && n.kind === "entity"; });
       var types = {}; nodes.forEach(function (n) { types[ENT[n.type]] = 1; });
       return '<button data-cl="' + k.id + '"' + (k.id === cl.id ? ' aria-current="true"' : "") + '><span><b class="num">' + k.accounts + "</b> аккаунтов · " +
-        (k.tracks.length ? "треки " + k.tracks.join(", ") : "трек не определён") + (k.cross_track ? ' <span class="pill lv-high">одна сеть — разные схемы</span>' : "") + "</span>" +
+        (k.tracks.length ? "схемы: " + k.tracks.map(function (t) { return TRACK[t].toLowerCase(); }).join(", ") : "вид схемы не определён") + (k.cross_track ? ' <span class="pill lv-high">одна сеть — разные схемы</span>' : "") + "</span>" +
         '<span class="muted" style="font-size:13px">Связаны через: ' + Object.keys(types).join(", ").toLowerCase() + " · макс. риск " + k.max_risk + "</span></button>";
     }).join("") + '</section><section><div class="panel graph-box">' + graphSvg(cl) +
       '<div class="legend"><span><i style="background:var(--high);border-radius:50%"></i>аккаунт, высокий риск</span><span><i style="background:var(--med);border-radius:50%"></i>средний</span><span><i style="background:var(--low);border-radius:50%"></i>низкий: связь есть, текст не помечен</span>' +
@@ -645,7 +645,7 @@ tr.ours td { font-weight: 600; }
   /* ── Метрики ───────────────────────────────────────────── */
   function renderMetrics() {
     var M = D.metrics, t = M.full.test.all, b = M.baseline.test.all, st = M.stress, td = M.time_to_detection;
-    var names = { baseline: "Поиск по словам", rules: "Признаки без сети и ML", full: "SafeNet KZ" };
+    var names = { baseline: "Поиск по словам", rules: "Признаки без сети и ML", full: "AlayakAlert" };
     function row(m, tr) { var x = M[m].test[tr]; return '<tr class="' + (m === "full" ? "ours" : "") + '"><td>' + names[m] + '</td><td>' + (tr === "all" ? "все" : TRACK[tr]) + '</td><td class="n">' + pct(x.precision) + '</td><td class="n">' + pct(x.recall) + '</td><td class="n">' + pct(x.fpr) + "</td></tr>"; }
     function bar(label, v, col) { return '<div class="bar-row"><span>' + label + '</span><div class="bar-track"><div class="bar-fill" style="width:' + (v * 100) + "%;background:" + col + '"></div></div><span class="num">' + pct(v) + "</span></div>"; }
     var tech = { emoji: "эмодзи", homoglyph: "латинские двойники", leet: "цифры вместо букв", mixed: "смешанная", spaced: "разрядка", stretch: "растянутые буквы", translit: "транслит" };
@@ -653,13 +653,13 @@ tr.ours td { font-weight: 600; }
       '<section class="panel wide"><h2>Тестовая выборка: другие формулировки, сленг, казахский, транслит</h2><div class="kpis">' +
       '<div class="kpi"><b class="num">' + pct(t.precision) + '</b><span>точность (precision)</span></div><div class="kpi"><b class="num">' + pct(t.recall) + '</b><span>полнота (recall), у словаря ' + pct(b.recall) + '</span></div>' +
       '<div class="kpi"><b class="num">' + pct(t.fpr) + '</b><span>ложных срабатываний</span></div><div class="kpi"><b class="num">' + M.dataset.test + '</b><span>кейсов в тесте из ' + M.dataset.total + "</span></div></div>" +
-      '<div class="chart-wrap"><table><thead><tr><th>Метод</th><th>Трек</th><th class="n">Precision</th><th class="n">Recall</th><th class="n">Ложные</th></tr></thead><tbody>' +
+      '<div class="chart-wrap"><table><thead><tr><th>Метод</th><th>Вид схемы</th><th class="n">Precision</th><th class="n">Recall</th><th class="n">Ложные</th></tr></thead><tbody>' +
       ["1", "2", "3", "all"].map(function (tr) { return row("baseline", tr) + row("full", tr); }).join("") + "</tbody></table></div>" +
       '<p class="fine">Кейс считается помеченным при среднем или высоком риске (40 и выше). Тестовая часть написана в другой манере, чем обучающая: сленг, казахский, транслит. Данные синтетические: на реальном потоке цифры будут ниже, их нужно перепроверить на выборке, размеченной аналитиками.</p></section>' +
       '<section class="panel"><h2>Стресс-тест маскировки</h2><p class="fine">Тексты теста испорчены так, как это делают мошенники: «к@зин0», «к а з и н о», эмодзи, латинские буквы-двойники, транслит.</p><div class="bars">' +
       bar("Словарь, чистый текст", st.baseline.clean.recall, "var(--muted)") + bar("Словарь, маскировка", st.baseline.masked.recall, "var(--muted)") +
-      bar("SafeNet, чистый текст", st.engine.clean.recall, "var(--accent)") + bar("SafeNet, маскировка", st.engine.masked.recall, "var(--accent)") + '</div>' +
-      '<div class="chart-wrap"><table><thead><tr><th>Техника</th><th class="n">Словарь</th><th class="n">SafeNet</th></tr></thead><tbody>' +
+      bar("AlayakAlert, чистый текст", st.engine.clean.recall, "var(--accent)") + bar("AlayakAlert, маскировка", st.engine.masked.recall, "var(--accent)") + '</div>' +
+      '<div class="chart-wrap"><table><thead><tr><th>Техника</th><th class="n">Словарь</th><th class="n">AlayakAlert</th></tr></thead><tbody>' +
       Object.keys(st.by_technique).sort().map(function (k) { var x = st.by_technique[k]; return "<tr><td>" + (tech[k] || k) + '</td><td class="n">' + x.baseline + " из " + x.n + '</td><td class="n">' + x.engine + " из " + x.n + "</td></tr>"; }).join("") +
       "</tbody></table></div></section>" +
       '<section class="panel"><h2>Скорость обнаружения</h2><div class="kpis"><div class="kpi"><b class="num">' + td.avg_first_high_msg + '</b><span>сообщение, на котором риск становится высоким (в среднем)</span></div>' +
@@ -686,16 +686,18 @@ tr.ours td { font-weight: 600; }
   /* ── Проверка текста ───────────────────────────────────── */
   function renderCheck() {
     var server = D.mode === "server";
-    view.innerHTML = '<div class="check"><section class="panel" style="padding:18px 20px;display:flex;flex-direction:column;gap:12px"><h2>Проверить текст</h2>' +
+    view.innerHTML = '<div class="check"><section class="panel" style="padding:18px 20px;display:flex;flex-direction:column;gap:12px"><h2>Проверить текст или чат</h2>' +
       '<p class="fine" style="margin:0">Вставьте пост, переписку из чата или расшифровку эфира. Для переписки и эфира — каждое сообщение с новой строки, можно со временем и ником: «[1:20] @ник: текст». Система сама найдёт ставки, победителей и приз.' + (server ? "" : " Проверка правилами своего текста работает при запуске сервера на ноутбуке (python -m app.server). Здесь свой текст может прочитать ИИ — кнопка «Спросить ИИ».") + '</p>' +
       '<label for="chk-text" class="muted" style="font-size:13px">Текст для проверки</label><textarea id="chk-text" placeholder="Например: вложи 5000, через неделю получишь 10 000, переводи на каспи"></textarea>' +
-      '<div class="actions"><button class="btn primary" id="chk-run"' + (server ? "" : " disabled") + '>Проверить правилами</button>' + (server ? "" : '<button class="btn" id="chk-ai" disabled>Спросить ИИ</button>') + '<span class="muted" id="chk-msg" role="status"></span></div>' +
+      '<div class="actions"><button class="btn' + (server ? " primary" : "") + '" id="chk-run"' + (server ? "" : " disabled") + '>Проверить правилами</button>' + (server ? "" : '<button class="btn primary" id="chk-ai" disabled>Спросить ИИ</button>') + '<span class="muted" id="chk-msg" role="status"></span></div>' +
       '<div style="border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px"><h3>Выгрузка чата</h3>' +
       '<p class="fine" style="margin:0">Telegram Desktop: «Экспорт истории чата» → формат JSON → файл result.json. WhatsApp: «Экспорт чата» → «Без медиафайлов» → файл .txt.' + (server ? "" : " Правилами свой файл разбирается при запуске сервера; здесь его может прочитать ИИ. Ниже есть готовые примеры выгрузок.") + '</p>' +
       '<label for="chk-file" class="muted" style="font-size:13px">Файл выгрузки</label><input type="file" id="chk-file" accept=".json,.txt"' + (server ? "" : " disabled") + '>' +
       '<div class="actions"><button class="btn primary" id="chk-upload"' + (server ? "" : " disabled") + '>' + (server ? "Разобрать выгрузку" : "Разобрать с ИИ") + '</button><span class="muted" id="chk-up-msg" role="status"></span></div></div>' +
       '<div><div class="muted" style="font-size:13px;margin-bottom:6px">Готовые примеры</div><div class="samples">' + D.samples.map(function (s, i) { return '<button data-sample="' + i + '">' + esc(s.label) + "</button>"; }).join("") + '</div></div></section>' +
-      '<section id="chk-out"><div class="panel empty">Выберите пример или вставьте свой текст.</div></section></div>';
+      '<section id="chk-out"><div class="panel empty" style="text-align:left"><h3 style="margin-top:0">Как проверить</h3><ol style="margin:8px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px">' +
+      "<li>Вставьте пост, переписку или расшифровку эфира в поле слева.</li><li>Или загрузите выгрузку чата из Telegram или WhatsApp.</li><li>Или нажмите любой готовый пример — увидите, как система объясняет риск.</li></ol>" +
+      '<p class="fine" style="margin-bottom:0">Система не обвиняет: она показывает признаки схемы и цитаты, а решает человек.</p></div></section></div>';
     document.querySelectorAll("[data-sample]").forEach(function (b) {
       b.addEventListener("click", function () { var s = D.samples[+b.dataset.sample]; document.getElementById("chk-text").value = s.text; showCheck(s.result, s.chat_text || s.text); });
     });
@@ -802,7 +804,7 @@ tr.ours td { font-weight: 600; }
   // Правила остаются главными; ИИ — независимый второй читатель для новых формулировок.
   var AI = { fn: null, state: "wait", res: {}, src: {}, ctl: {}, sets: {} };
   var AI_RULES = [
-    "Ты — второй, независимый проверяющий в системе SafeNet KZ (Казахстан). Аналитики ищут в соцсетях, мессенджерах и эфирах признаки трёх видов схем.",
+    "Ты — второй, независимый проверяющий в системе AlayakAlert (Казахстан). Аналитики ищут в соцсетях, мессенджерах и эфирах признаки трёх видов схем.",
     "1 — незаконные лотереи и розыгрыши: плата за участие или за «билет», плата за получение уже выигранного приза (доставка, комиссия, взнос), аукционы «кто последний скинул — забирает банк», организатор оставляет себе часть собранных денег, подставные участники, один и тот же победитель.",
     "2 — скрытая реклама онлайн-казино и ставок: «заносы», промокоды и ссылки на казино и слоты, реклама азартных игр под видом обычного поста, переход в каналы с «бонусами».",
     "3 — финансовые пирамиды: обещание дохода, который нельзя получить честно (кратный рост, высокий фиксированный процент, «гарантированно»), вознаграждение за приглашённых, плата за вывод денег, давление сроками и «местами», заверения «это не пирамида», скриншоты выплат.",
@@ -957,7 +959,7 @@ tr.ours td { font-weight: 600; }
     var sets = D.ai_sets || [];
     var h = "<h2>Второе мнение ИИ на наборах команды</h2>";
     if (AI.state === "off") { box.innerHTML = h + '<p class="fine">ИИ доступен только в онлайн-версии дашборда.</p>'; return; }
-    h += '<p class="fine">Модель читает каждый текст набора независимо от правил. Считаем «помечено», если ИИ сказал «подозрительно» или «стоит проверить». Инструкция для ИИ написана один раз, до запуска, общими словами о трёх треках, без фраз из этих наборов. Оговорка: автор инструкции видел, какие тексты набора 4 пропустили правила, поэтому для ИИ он не полностью слепой. Первый запуск записываем как есть.</p>';
+    h += '<p class="fine">Модель читает каждый текст набора независимо от правил. Считаем «помечено», если ИИ сказал «подозрительно» или «стоит проверить». Инструкция для ИИ написана один раз, до запуска, общими словами о трёх видах схем, без фраз из этих наборов. Оговорка: автор инструкции видел, какие тексты набора 4 пропустили правила, поэтому для ИИ он не полностью слепой. Первый запуск записываем как есть.</p>';
     sets.forEach(function (s) {
       var st = AI.sets[s.key], P = s.rows.filter(function (r) { return r.label; }).length, N = s.rows.length - P;
       h += '<div class="ai-set"><h3>' + esc(s.name) + ' <span class="muted" style="font-weight:400">· ' + s.rows.length + " текстов: " + P + " подозрительных, " + N + " честных</span></h3>";

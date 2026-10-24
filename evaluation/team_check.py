@@ -54,7 +54,7 @@ def run(path: str, verbose: bool = True) -> dict:
     print(f"Precision {prec:.0%} · Recall {rec:.0%} · F1 {f1:.0%} · Ложные срабатывания {fpr:.0%}")
     for t, pairs in sorted(per_track.items()):
         pos = [p for y, p in pairs if y]
-        print(f"  трек {t}: найдено {sum(pos)} из {len(pos)} подозрительных, ложных {sum(p for y, p in pairs if not y)} из {sum(1 for y, _ in pairs if not y)}")
+        print(f"  вид схемы {t}: найдено {sum(pos)} из {len(pos)} подозрительных, ложных {sum(p for y, p in pairs if not y)} из {sum(1 for y, _ in pairs if not y)}")
     return {"n": len(cases), "tp": tp, "fp": fp, "fn": fn, "tn": tn, "precision": prec, "recall": rec, "f1": f1, "fpr": fpr}
 
 

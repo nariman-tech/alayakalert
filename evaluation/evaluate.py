@@ -1,7 +1,7 @@
-"""Оценка качества SafeNet KZ.
+"""Оценка качества AlayakAlert.
 
 Считает:
-1. precision / recall / доля ложных срабатываний (FPR) по трекам — на train и test;
+1. precision / recall / доля ложных срабатываний (FPR) по видам схем — на train и test;
    кейс считается помеченным при среднем или высоком риске (риск ≥ 40);
 2. сравнение с базовой линией «поиск по ключевым словам» (≥ 2 разных слова из списка);
 3. стресс-тест маскировки: тестовые тексты портятся (транслит, к@зин0, разрядка, эмодзи,
@@ -227,13 +227,13 @@ def pct(x: float) -> str:
 
 
 def render_md(r: dict) -> str:
-    L = ["# Метрики SafeNet KZ", "",
+    L = ["# Метрики AlayakAlert", "",
          f"Датасет: {r['dataset']['total']} кейсов (train {r['dataset']['train']}, test {r['dataset']['test']}; "
          f"подозрительных {r['dataset']['positive']}, честных {r['dataset']['negative']}). "
          "Кейс помечен, если риск средний или высокий.", "",
          "## Тестовая выборка (другая манера письма: сленг, казахский, транслит)", "",
-         "| Метод | Трек | Precision | Recall | Ложные срабатывания |", "| --- | --- | --- | --- | --- |"]
-    names = {"baseline": "Словарь (≥ 2 ключевых слова)", "rules": "Признаки (без сети и ML)", "full": "SafeNet KZ (признаки + сеть + ML)"}
+         "| Метод | Вид схемы | Precision | Recall | Ложные срабатывания |", "| --- | --- | --- | --- | --- |"]
+    names = {"baseline": "Словарь (≥ 2 ключевых слова)", "rules": "Признаки (без сети и ML)", "full": "AlayakAlert (признаки + сеть + ML)"}
     for m in ("baseline", "rules", "full"):
         for t in ("1", "2", "3", "all"):
             x = r[m]["test"][t]
@@ -241,10 +241,10 @@ def render_md(r: dict) -> str:
     s = r["stress"]
     L += ["", "## Стресс-тест маскировки (тестовая выборка)", "",
           "| Метод | Recall без маскировки | Recall с маскировкой | Ложные срабатывания с маскировкой |", "| --- | --- | --- | --- |"]
-    for m, label in (("baseline", "Словарь"), ("engine", "SafeNet KZ")):
+    for m, label in (("baseline", "Словарь"), ("engine", "AlayakAlert")):
         L.append(f"| {label} | {pct(s[m]['clean']['recall'])} | {pct(s[m]['masked']['recall'])} | {pct(s[m]['masked']['fpr'])} |")
     L += ["", "По техникам (только подозрительные кейсы): " + "; ".join(
-        f"{k}: словарь {v['baseline']}/{v['n']}, SafeNet {v['engine']}/{v['n']}" for k, v in sorted(s["by_technique"].items()))]
+        f"{k}: словарь {v['baseline']}/{v['n']}, AlayakAlert {v['engine']}/{v['n']}" for k, v in sorted(s["by_technique"].items()))]
     t = r["time_to_detection"]
     L += ["", "## Скорость обнаружения (чаты и эфиры)", "",
           f"- Высокий риск достигнут в {t['detected_high']} из {t['cases']} подозрительных чатов и эфиров.",

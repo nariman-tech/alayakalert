@@ -1,6 +1,6 @@
 """Офлайн-сборка дашборда в один HTML-файл (открывается двойным щелчком, без сервера и интернета*).
 
-    python -m app.build   ->  dist/safenet_dashboard.html
+    python -m app.build   ->  dist/alayakalert.html
 
 * Шрифты подгружаются из Google Fonts; без интернета браузер подставит системный шрифт.
 Режим «проверить свой текст» в офлайн-сборке работает только на готовых примерах.
@@ -20,7 +20,7 @@ def main():
     dist = ROOT / "dist"
     dist.mkdir(exist_ok=True)
     payload = build_payload("static")
-    out = dist / "safenet_dashboard.html"
+    out = dist / "alayakalert.html"
     out.write_text(render_page(payload, full_document=True), encoding="utf-8")
     (dist / "artifact.html").write_text(render_page(payload, full_document=False), encoding="utf-8")
     print(f"Готово: {out} ({out.stat().st_size // 1024} КБ)")

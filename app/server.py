@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT))
 try:
     from flask import Flask, Response, jsonify, request
 except ImportError:  # pragma: no cover
-    raise SystemExit("Нужен Flask: pip install flask\nБез сервера: python -m app.build и открыть dist/safenet_dashboard.html")
+    raise SystemExit("Нужен Flask: pip install flask\nБез сервера: python -m app.build и открыть dist/alayakalert.html")
 
 from app.payload import build_payload, render_page  # noqa: E402
 from engine.ml import TextModel  # noqa: E402
@@ -96,5 +96,5 @@ def feedback():
 
 
 if __name__ == "__main__":
-    print("SafeNet KZ: http://localhost:8000")
+    print("AlayakAlert: http://localhost:8000")
     app.run(host="0.0.0.0", port=8000, debug=False)
