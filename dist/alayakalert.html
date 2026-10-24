@@ -1102,7 +1102,7 @@ var ENGINE_DATA = {"rx": {"N": {"ZERO_WIDTH": ["[​-‏⁠﻿­]", ""], "CYR_RE
     return '<button class="row" data-id="' + r.id + '"' + (r.id === S.sel ? ' aria-current="true"' : "") + '>' +
       '<span class="score num ' + lvClass(r.level) + '">' + r.risk + "</span><span>" +
       '<span class="meta"><span>' + TYPE[c.type] + " · " + esc(c.platform) + "</span><span>" + esc(c.account) + "</span>" +
-      (r.track ? "<span>" + TRACK[r.track] + "</span>" : "") +
+      (r.track && r.level !== "low" ? "<span>" + TRACK[r.track] + "</span>" : "") +
       (fb ? '<span class="' + (fb === "ok" ? "status-ok" : "status-fp") + '">' + (fb === "ok" ? "Подтверждено" : "Ложное срабатывание") + "</span>" : "") + "</span>" +
       '<span class="snip">' + esc(c.messages[0] ? c.messages[0].text : "") + "</span>" +
       '<span class="sigs">' + pos.map(function (s) { return '<span class="chip">' + esc(s.title) + "</span>"; }).join("") + "</span></span></button>";
@@ -1135,7 +1135,7 @@ var ENGINE_DATA = {"rx": {"N": {"ZERO_WIDTH": ["[​-‏⁠﻿­]", ""], "CYR_RE
     var neg = r.signals.filter(function (s) { return s.points < 0; });
     var fb = S.fb[id];
     var h = '<article class="panel card"><div class="card-head"><div class="big num ' + lvClass(r.level) + '">' + r.risk + '</div>' +
-      '<div><div class="headline"><span class="pill ' + lvClass(r.level) + '">' + LV[r.level] + ' риск</span><span class="chip">' + esc(r.track_name) + "</span>" +
+      '<div><div class="headline"><span class="pill ' + lvClass(r.level) + '">' + LV[r.level] + ' риск</span>' + (r.level !== "low" ? '<span class="chip">' + esc(r.track_name) + "</span>" : "") +
       '<span class="chip">' + TYPE[c.type] + " · " + esc(c.platform) + '</span></div><div class="muted" style="margin-top:4px">' + esc(c.account) + " · " + esc(c.title) + (c.date ? " · " + esc(c.date) : "") + " · " + c.id + "</div>" +
       scaleHtml(r.risk, r.level) + "</div></div>" +
       '<p class="sumtext">' + esc(r.summary) + "</p>";
@@ -1252,7 +1252,7 @@ var ENGINE_DATA = {"rx": {"N": {"ZERO_WIDTH": ["[​-‏⁠﻿­]", ""], "CYR_RE
   function reportText(id) {
     var r = resById[id], c = byId[id];
     var L = ["Справка AlayakAlert по кейсу " + id, "Источник: " + c.platform + ", " + c.account + " (" + TYPE[c.type] + ")",
-      "Уровень риска: " + LV[r.level] + " (" + r.risk + " из 100), " + r.track_name, "", r.summary, ""];
+      "Уровень риска: " + LV[r.level] + " (" + r.risk + " из 100)" + (r.level !== "low" ? ", " + r.track_name : ""), "", r.summary, ""];
     r.signals.filter(function (s) { return s.points > 0; }).forEach(function (s) {
       L.push("• " + s.title + (s.note ? " — " + s.note : "") + " (+" + s.points + ")");
       (s.evidence || []).forEach(function (e) { L.push("    «" + e.text + "»"); });
@@ -1404,7 +1404,7 @@ var ENGINE_DATA = {"rx": {"N": {"ZERO_WIDTH": ["[​-‏⁠﻿­]", ""], "CYR_RE
     if (!n) { box.innerHTML = '<div class="panel node-info muted">Нажмите на аккаунт или общий реквизит, чтобы увидеть связанные кейсы.</div>'; return; }
     var cs = n.cases.map(function (id) { return resById[id]; }).sort(function (a, b) { return b.risk - a.risk; });
     box.innerHTML = '<div class="panel node-info"><h3>' + (n.kind === "account" ? "Аккаунт " : ENT[n.type] + " ") + esc(n.label) + '</h3><div class="muted" style="margin-bottom:8px">Связанных кейсов: ' + cs.length + "</div>" +
-      cs.map(function (r) { var c = byId[r.id]; return '<div style="display:flex;gap:10px;align-items:center;padding:4px 0"><span class="pill ' + lvClass(r.level) + ' num">' + r.risk + '</span><a href="#queue" data-open="' + r.id + '">' + esc(c.account) + " · " + TYPE[c.type] + " · " + TRACK[r.track] + "</a></div>"; }).join("") + "</div>";
+      cs.map(function (r) { var c = byId[r.id]; return '<div style="display:flex;gap:10px;align-items:center;padding:4px 0"><span class="pill ' + lvClass(r.level) + ' num">' + r.risk + '</span><a href="#queue" data-open="' + r.id + '">' + esc(c.account) + " · " + TYPE[c.type] + (r.level !== "low" ? " · " + TRACK[r.track] : "") + "</a></div>"; }).join("") + "</div>";
     box.querySelectorAll("[data-open]").forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); S.sel = a.dataset.open; S.view = "queue"; S.track = "all"; S.level = "all"; S.split = "all"; S.q = ""; render(); }); });
   }
 
@@ -1549,7 +1549,7 @@ var ENGINE_DATA = {"rx": {"N": {"ZERO_WIDTH": ["[​-‏⁠﻿­]", ""], "CYR_RE
       parsed += '<div class="actions"><button class="btn primary" id="chk-live">Смотреть в живом эфире</button></div>';
     }
     document.getElementById("chk-out").innerHTML = '<article class="panel card" style="position:static;max-height:none"><div class="card-head"><div class="big num ' + lvClass(r.level) + '">' + r.risk + "</div><div>" +
-      '<div class="headline"><span class="pill ' + lvClass(r.level) + '">' + LV[r.level] + ' риск</span><span class="chip">' + esc(r.track_name) + "</span>" +
+      '<div class="headline"><span class="pill ' + lvClass(r.level) + '">' + LV[r.level] + ' риск</span>' + (r.level !== "low" ? '<span class="chip">' + esc(r.track_name) + "</span>" : "") +
       (c && c.type !== "post" ? '<span class="chip">' + (c.type === "stream" ? "эфир" : "переписка") + "</span>" : "") + "</div>" + scaleHtml(r.risk, r.level) + "</div></div>" +
       '<p class="sumtext">' + esc(r.summary) + "</p>" + combosHtml(r) +
       (pos.length ? '<section class="signals"><h3>Почему</h3>' + pos.map(sigHtml).join("") + "</section>" : "") +
